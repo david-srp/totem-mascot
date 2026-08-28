@@ -6,6 +6,7 @@ window.I18N = {
     'brand':'Totem',
     'cta.start':'Start designing', 'cta.works':'See the work', 'cta.open':'Open workspace',
     'nav.guide':'How it was made',
+    'foot.src':'Source on GitHub',
     'foot.credit':'Design spec from <a href="https://github.com/s1dashu/ip-as-logo-skill" target="_blank" rel="noopener">ip-as-logo</a>, MIT licensed',
 
     /* ── 页面标题 ── */
