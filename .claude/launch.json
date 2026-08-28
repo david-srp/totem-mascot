@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ip-as-logo-dev",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--env-file=.env", "scripts/dev-logo-server.mjs"],
+      "port": 5290
+    }
+  ]
+}

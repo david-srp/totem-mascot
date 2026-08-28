@@ -1,0 +1,9 @@
+.env
+server.mjs
+scripts/
+recruitment-specialist/
+ip-as-logo/
+.agents/
+.build/
+node_modules/
+public/recruitment.html

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "skills": {
+    "zooclaw-managed-agents": {
+      "source": "SerendipityOneInc/zoowork-sdk-skills",
+      "sourceType": "github",
+      "skillPath": "skills/zooclaw-managed-agents/SKILL.md",
+      "computedHash": "a2f1d882ebec3367578bf4175eaebc577a12c9b611ec8de0a187340ad6bc7356",
+      "commit": "1c606b2f88a42d9580f40a26a48eb951ae634436"
+    }
+  }
+}

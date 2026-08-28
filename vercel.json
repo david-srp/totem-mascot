@@ -1,0 +1,13 @@
+{
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/app",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/guide",
+      "destination": "/guide.html"
+    }
+  ]
+}

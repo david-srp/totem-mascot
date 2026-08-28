@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="zh" data-title-key="t.index">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>图腾 Totem · 给你的产品做一只认得出的吉祥物</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#F4F4F2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111214" media="(prefers-color-scheme: dark)">
+<meta name="description" content="说一句你的产品是做什么的，它给你三个方向和六张吉祥物标志，画完自己检查，不合格的自己重画。" />
+<link rel="preload" href="/fonts/Geist-gyByhwUxId8gMEwcGFWNOITd.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts.css">
+<link rel="stylesheet" href="/tokens.css">
+<script>
+/* 必须同步执行：先定主题和语言，避免闪一下 */
+(function(){var d=document.documentElement;try{
+var t=localStorage.getItem('totem-theme')||'system';if(t!=='system')d.dataset.theme=t;
+var l=localStorage.getItem('totem-lang');
+if(!l)l=(navigator.language||'zh').toLowerCase().indexOf('zh')===0?'zh':'en';
+d.dataset.lang=l;if(l!=='zh')d.classList.add('i18n-pending');
+}catch(e){d.dataset.lang='zh';}})();
+</script>
+<style>
+.wrap{max-width:1160px; margin:0 auto; padding:0 28px;}
+section{padding:clamp(72px,9vw,124px) 0;}
+.h2{font-size:clamp(27px,3.7vw,44px); text-wrap:balance;}
+.lede{margin-top:14px; color:var(--ink-2); font-size:clamp(15.5px,1.6vw,18px); max-width:46ch; line-height:1.65;}
+
+/* ── 顶栏 ── */
+nav{position:sticky; top:0; z-index:50; height:64px; background:color-mix(in oklab,var(--paper) 84%,transparent); backdrop-filter:blur(16px) saturate(150%); border-bottom:1px solid transparent; transition:border-color .3s;}
+nav.stuck{border-bottom-color:var(--line);}
+nav .wrap{display:flex; align-items:center; gap:10px; height:100%;}
+.brand{display:flex; align-items:center; gap:9px; font-weight:650; font-size:16px; letter-spacing:-.025em; text-decoration:none;}
+.brand .mk{width:26px; height:26px; border-radius:8px; flex-shrink:0; box-shadow:var(--shadow-sm); transition:transform .4s var(--bounce);}
+.brand:hover .mk{transform:rotate(-8deg) scale(1.08);}
+.brand{font-size:17px;}
+nav .sp{margin-left:auto;}
+.gl{margin-left:auto; margin-right:2px; font-size:14px; color:var(--ink-2); text-decoration:none; transition:color .2s;}
+.gl:hover{color:var(--accent);}
+
+/* ── 1. 首屏 ── */
+.hero{padding:clamp(36px,5vw,64px) 0 clamp(56px,7vw,88px);}
+.hero .wrap{display:grid; grid-template-columns:1.14fr .86fr; gap:clamp(30px,4vw,60px); align-items:center;}
+.hero h1{font-size:clamp(32px,4.4vw,52px); letter-spacing:-.035em;}
+.hero .lede{max-width:30ch; font-size:clamp(15.5px,1.6vw,18px);}
+.hero .acts{display:flex; gap:11px; margin-top:30px; flex-wrap:wrap;}
+
+/* 三张叠放的吉祥物卡片：可爱来自圆角、错位与轻微旋转 */
+.cluster{position:relative; aspect-ratio:1/.92;}
+.cluster figure{
+  position:absolute; margin:0; border-radius:var(--r-lg); overflow:hidden;
+  background:var(--card); box-shadow:var(--shadow-lg);
+  transition:transform .55s var(--bounce);
+}
+.cluster figure img{width:100%; height:100%; object-fit:cover;}
+.cluster .c1{width:58%; left:0; top:6%; z-index:3; transform:rotate(-5deg);}
+.cluster .c2{width:50%; right:2%; top:0; z-index:2; transform:rotate(6deg);}
+.cluster .c3{width:44%; right:14%; bottom:0; z-index:4; transform:rotate(-2deg);}
+.cluster:hover .c1{transform:rotate(-8deg) translate(-6px,-8px);}
+.cluster:hover .c2{transform:rotate(9deg) translate(8px,-6px);}
+.cluster:hover .c3{transform:rotate(0deg) translateY(8px) scale(1.04);}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.cluster{animation:bob 7s ease-in-out infinite;}
+
+/* ── 2. 尺寸演示 ── */
+.sizes{background:var(--card); border-radius:var(--r-lg); box-shadow:var(--shadow-sm); padding:clamp(28px,4vw,52px);}
+.ruler{margin-top:clamp(28px,4vw,44px); display:flex; align-items:flex-end; gap:clamp(16px,4vw,54px); flex-wrap:wrap;}
+.tier{display:flex; flex-direction:column; align-items:center; gap:12px;}
+.tier img{border-radius:var(--r-md); box-shadow:var(--shadow-sm);}
+.tier .sz32{border-radius:7px;}
+.tier b{font-size:13px; font-weight:600; color:var(--ink-2); white-space:nowrap;}
+.tier.hi b{color:var(--accent);}
+
+/* ── 3. 三步 ── */
+.steps{display:grid; grid-template-columns:1.5fr 1fr 1fr; gap:14px; margin-top:clamp(28px,4vw,44px);}
+.card{background:var(--card); border-radius:var(--r-lg); padding:clamp(24px,3vw,32px); box-shadow:var(--shadow-sm); transition:transform .3s var(--ease), box-shadow .3s var(--ease);}
+.card:hover{transform:translateY(-3px); box-shadow:var(--shadow-md);}
+.step .num{width:34px; height:34px; border-radius:var(--r-pill); background:var(--accent-soft); color:var(--accent); display:grid; place-items:center; font-weight:700; font-size:15px; margin-bottom:16px;}
+.step h3{font-size:20px;}
+.step p{margin-top:9px; color:var(--ink-2); font-size:15px; line-height:1.65;}
+.step.wide{display:flex; flex-direction:column; justify-content:space-between;}
+.bubble{margin-top:20px; background:var(--sunk); border-radius:var(--r-md); border-top-left-radius:5px; padding:14px 16px; font-size:14.5px; color:var(--ink-2); line-height:1.6;}
+
+/* ── 4. 作品带 ── */
+.works{overflow:hidden; padding:clamp(72px,9vw,124px) 0;}
+.works .wrap{margin-bottom:clamp(26px,3vw,40px);}
+.belt{display:flex; gap:16px; width:max-content; animation:roll 52s linear infinite;}
+.works:hover .belt{animation-play-state:paused;}
+@keyframes roll{from{transform:translateX(0)}to{transform:translateX(calc(-50% - 8px))}}
+.belt img{width:clamp(150px,20vw,210px); height:clamp(150px,20vw,210px); object-fit:cover; border-radius:var(--r-lg); box-shadow:var(--shadow-sm); flex-shrink:0;}
+
+/* ── 5. 自查返工 ── */
+.fix .wrap{display:grid; grid-template-columns:.95fr 1.05fr; gap:clamp(30px,5vw,60px); align-items:center;}
+.ba{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+.ba figure{margin:0;}
+.ba .shot{position:relative; border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow-md);}
+.ba .shot img{width:100%; aspect-ratio:1/1; object-fit:cover;}
+.ba .chip{position:absolute; left:11px; top:11px; border-radius:var(--r-pill); padding:5px 11px; font-size:12.5px; font-weight:600; background:var(--card); color:var(--ink-2); box-shadow:var(--shadow-sm);}
+.ba .chip.good{background:var(--ok-soft); color:var(--ok);}
+.ba figcaption{margin-top:11px; font-size:14.5px; color:var(--ink-2); line-height:1.6; text-align:center;}
+
+/* ── 6. 收尾 ── */
+.end{text-align:center;}
+.end .lede{margin-left:auto; margin-right:auto; text-align:center;}
+.end .acts{margin-top:28px; display:flex; justify-content:center;}
+footer{border-top:1px solid var(--line); padding:26px 0 40px;}
+footer .wrap{display:flex; flex-wrap:wrap; gap:8px 22px; align-items:center; font-size:13px; color:var(--ink-3);}
+footer a{color:var(--ink-2); text-decoration:none;}
+footer a:hover{color:var(--accent);}
+
+/* ── 入场 ── */
+.up{opacity:0; transform:translateY(16px); transition:opacity .65s var(--ease), transform .65s var(--ease);}
+.up.in{opacity:1; transform:none;}
+@media (prefers-reduced-motion: reduce){ .up{opacity:1; transform:none;} .cluster,.belt{animation:none;} }
+
+/* ── 移动端 ── */
+@media (max-width:880px){
+  .wrap{padding:0 20px;}
+  .hero .wrap{grid-template-columns:1fr; gap:36px;}
+  .hero .lede{max-width:100%;}
+  .hero .acts .btn{flex:1; min-width:140px;}
+  .cluster{max-width:420px; margin:0 auto; width:100%;}
+  .steps{grid-template-columns:1fr;}
+  .fix .wrap{grid-template-columns:1fr; gap:30px;}
+  .ruler{gap:20px; justify-content:space-between;}
+}
+@media (max-width:520px){
+  .ruler{gap:14px;}
+  .tier b{font-size:11.5px;}
+  .ba{gap:10px;}
+  .ba figcaption{font-size:13px;}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="wrap">
+    <a class="brand" href="/"><img class="mk" src="/brandmark.webp" alt="" width="96" height="96"><span data-i18n="brand">图腾</span></a>
+    <a class="gl" href="/guide" data-i18n="nav.guide">怎么做的</a>
+    <span data-controls></span>
+    <a class="btn sm" href="/app" data-i18n="cta.start">开始设计</a>
+  </div>
+</nav>
+
+<!-- 1 -->
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <h1 class="up" data-i18n-html="hero.h">给你的产品，<br>做一只认得出的吉祥物</h1>
+      <p class="lede up" data-i18n="hero.sub">说一句你的产品是做什么的。方向、画图、检查、返工，它一次做完。</p>
+      <div class="acts up">
+        <a class="btn lg" href="/app" data-i18n="cta.start">开始设计</a>
+        <a class="btn lg soft" href="#works" data-i18n="cta.works">看看作品</a>
+      </div>
+    </div>
+    <div class="cluster up">
+      <figure class="c2"><img src="/showcase/B1r.webp" alt="墨绿底的咖啡豆吉祥物" width="640" height="640"></figure>
+      <figure class="c1"><img src="/showcase/A1r.webp" alt="深蓝底的圆头企鹅吉祥物" width="640" height="640"></figure>
+      <figure class="c3"><img src="/showcase/C1r.webp" alt="灰蓝底的浣熊吉祥物" width="640" height="640"></figure>
+    </div>
+  </div>
+</header>
+
+<!-- 2 -->
+<section>
+  <div class="wrap">
+    <div class="sizes up">
+      <h2 class="h2" data-i18n="sz.h">缩到 App 图标那么小，也还认得出</h2>
+      <p class="lede" data-i18n="sz.sub">这是好标志和好插画的区别。它画的每一只，都按这个标准来。</p>
+      <div class="ruler">
+        <div class="tier"><img src="/showcase/C1r.webp" alt="浣熊吉祥物，海报尺寸" width="240" height="240" style="width:min(240px,42vw);height:min(240px,42vw)"><b data-i18n="sz.poster">海报</b></div>
+        <div class="tier"><img src="/showcase/C1r.webp" alt="浣熊吉祥物，网页尺寸" width="120" height="120" style="width:min(120px,21vw);height:min(120px,21vw)"><b data-i18n="sz.web">网页</b></div>
+        <div class="tier"><img src="/showcase/C1r.webp" alt="浣熊吉祥物，头像尺寸" width="64" height="64" style="width:64px;height:64px"><b data-i18n="sz.avatar">头像</b></div>
+        <div class="tier hi"><img class="sz32" src="/showcase/C1r.webp" alt="浣熊吉祥物，App 图标尺寸" width="32" height="32" style="width:32px;height:32px"><b data-i18n="sz.icon">App 图标</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section id="how">
+  <div class="wrap">
+    <h2 class="h2 up" data-i18n="how.h">你只要说一句话</h2>
+    <p class="lede up" data-i18n="how.sub">不需要懂设计术语，也不用先想好画什么。</p>
+    <div class="steps">
+      <div class="card step wide up">
+        <div>
+          <div class="num">1</div>
+          <h3 data-i18n="how.1h">说说你的产品</h3>
+          <p data-i18n="how.1p">它做什么、给谁用、想给人什么感觉。一句话就够。</p>
+        </div>
+        <div class="bubble" data-i18n="how.eg">给一家做冷萃咖啡的品牌做吉祥物，客群是城市白领，要清爽、有点酷、不甜腻。</div>
+      </div>
+      <div class="card step up">
+        <div class="num">2</div>
+        <h3 data-i18n="how.2h">挑一个方向</h3>
+        <p data-i18n="how.2p">它会先给三个完全不同的想法，附上为什么适合你的产品。你点头它才动笔。</p>
+      </div>
+      <div class="card step up">
+        <div class="num">3</div>
+        <h3 data-i18n="how.3h">拿走成品</h3>
+        <p data-i18n="how.3p">六张各自独立的高清方图，随时可以让它接着改。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section id="works" class="works">
+  <div class="wrap">
+    <h2 class="h2 up" data-i18n="work.h">它画出来的样子</h2>
+    <p class="lede up" data-i18n="work.sub">下面这些来自同一次委托，从一句话开始，中途没有人挑过图。</p>
+  </div>
+  <div class="belt" id="belt">
+    <img src="/showcase/A1r.webp" alt="深蓝底圆头企鹅吉祥物" loading="lazy">
+    <img src="/showcase/B1r.webp" alt="墨绿底咖啡豆吉祥物" loading="lazy">
+    <img src="/showcase/C1r.webp" alt="灰蓝底浣熊吉祥物" loading="lazy">
+    <img src="/showcase/C2r.webp" alt="深紫底狐狸吉祥物" loading="lazy">
+    <img src="/showcase/B2r.webp" alt="炭黑底雪兽吉祥物" loading="lazy">
+    <img src="/showcase/owl.webp" alt="深蓝底猫头鹰吉祥物" loading="lazy">
+    <img src="/showcase/A2r.webp" alt="深棕底海豹吉祥物" loading="lazy">
+    <img src="/showcase/C1.webp" alt="深灰底浣熊吉祥物" loading="lazy">
+    <img src="/showcase/A1.webp" alt="藏青底企鹅吉祥物" loading="lazy">
+    <img src="/showcase/B2.webp" alt="墨绿底雪兽吉祥物" loading="lazy">
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="fix">
+  <div class="wrap">
+    <div class="up">
+      <h2 class="h2" data-i18n="fix.h">画错了，它自己会重画</h2>
+      <p class="lede" data-i18n="fix.sub">每张画完它都会再看一眼。角太尖、背景不干净、主体没露出画面，都会被挑出来重画一次，不会混在成品里交给你。</p>
+    </div>
+    <div class="ba up">
+      <figure>
+        <div class="shot"><span class="chip" data-i18n="fix.v1">第一版</span><img src="/showcase/B1.webp" alt="咖啡豆吉祥物第一版，角是尖的" loading="lazy"></div>
+        <figcaption data-i18n="fix.c1">角太尖了</figcaption>
+      </figure>
+      <figure>
+        <div class="shot"><span class="chip good" data-i18n="fix.v2">重画后</span><img src="/showcase/B1r.webp" alt="咖啡豆吉祥物重画后，角是圆的" loading="lazy"></div>
+        <figcaption data-i18n="fix.c2">收成圆的，其他没动</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="end">
+  <div class="wrap">
+    <h2 class="h2 up" data-i18n="end.h">现在就试一只</h2>
+    <p class="lede up" data-i18n="end.sub">从一句话到六张成品，泡杯咖啡的工夫。</p>
+    <div class="acts up"><a class="btn lg" href="/app" data-i18n="cta.start">开始设计</a></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span><a href="/guide" data-i18n="foot.guide">从零做一个这样的 Agent</a></span>
+    <span data-i18n="foot.self">图腾自己的头像，就是它画的第一批作品之一</span>
+    <span data-i18n-html="foot.credit">设计规范来自 <a href="https://github.com/s1dashu/ip-as-logo-skill" target="_blank" rel="noopener">ip-as-logo</a>，MIT 开源</span>
+    <span style="margin-left:auto"><a href="/app" data-i18n="cta.start">开始设计</a></span>
+  </div>
+</footer>
+
+<script>
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* 顶栏描边只在滚动后出现，首屏更干净 */
+const nav = document.getElementById('nav');
+new IntersectionObserver(([e]) => nav.classList.toggle('stuck', !e.isIntersecting),
+  { rootMargin: '-1px 0px 0px 0px', threshold: 1 })
+  .observe(document.querySelector('.hero'));
+
+/* 入场：IntersectionObserver，不监听 scroll */
+const io = new IntersectionObserver((es) => {
+  es.forEach((e) => {
+    if (!e.isIntersecting) return;
+    const sibs = [...(e.target.parentElement?.children || [])].filter(n => n.classList.contains('up'));
+    e.target.style.transitionDelay = Math.max(0, sibs.indexOf(e.target)) * 80 + 'ms';
+    e.target.classList.add('in');
+    io.unobserve(e.target);
+  });
+}, { threshold: .15, rootMargin: '0px 0px -6% 0px' });
+document.querySelectorAll('.up').forEach(el => reduce ? el.classList.add('in') : io.observe(el));
+
+/* 作品带需要复制一份才能无缝循环 */
+const belt = document.getElementById('belt');
+if (belt && !reduce) belt.innerHTML += belt.innerHTML;
+</script>
+<script src="/i18n.js"></script>
+<script src="/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+/* ─────────────────────────────────────────────────────────
+   IP as Logo 设计令牌。落地页与工作台共用，保证是同一个产品。
+   形状系统（锁定）：按钮全圆角 · 卡片 24px · 输入与小卡 16px · 标签全圆角
+   强调色全站唯一 --accent，主色按钮用近黑，把颜色让给作品本身
+   ───────────────────────────────────────────────────────── */
+:root{
+  --paper:#F4F4F2;
+  --card:#FFFFFF;
+  --sunk:#EDEDEA;
+  --line:#E4E4DF;
+  --line-2:#D3D3CC;
+  --ink:#17181A;
+  --ink-2:#5F646C;
+  --ink-3:#989DA5;
+  --accent:#E8552F;
+  --accent-soft:#FDEEE8;
+  --accent-line:#F7C4B1;
+  --ok:#1B7A55;
+  --ok-soft:#E6F4EE;
+
+  --r-lg:24px;
+  --r-md:16px;
+  --r-sm:10px;
+  --r-pill:999px;
+
+  --shadow-sm:0 1px 2px rgba(23,24,26,.05), 0 4px 12px -6px rgba(23,24,26,.10);
+  --shadow-md:0 2px 4px rgba(23,24,26,.05), 0 14px 32px -14px rgba(23,24,26,.20);
+  --shadow-lg:0 4px 8px rgba(23,24,26,.05), 0 28px 60px -24px rgba(23,24,26,.28);
+
+  --sans:"Geist","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --ease:cubic-bezier(.2,.8,.28,1);
+  --bounce:cubic-bezier(.34,1.4,.64,1);
+}
+/* ── 主题三态 ──
+   跟随系统：<html> 上不带 data-theme，由媒体查询决定
+   手动选亮：data-theme="light"，用 :not() 让媒体查询让位
+   手动选暗：data-theme="dark"，浅色系统下同样生效
+   ──────────────────────────────────────────────── */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+  --paper:#111214; --card:#1A1C1F; --sunk:#16181A;
+  --line:#282B30; --line-2:#383C42;
+  --ink:#F2F2F0; --ink-2:#A2A7AF; --ink-3:#71767E;
+  --accent:#FF6A44; --accent-soft:#2A1A15; --accent-line:#5A3226;
+  --ok:#4ECB93; --ok-soft:#12251E;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.3), 0 4px 12px -6px rgba(0,0,0,.5);
+  --shadow-md:0 2px 4px rgba(0,0,0,.3), 0 14px 32px -14px rgba(0,0,0,.6);
+  --shadow-lg:0 4px 8px rgba(0,0,0,.3), 0 28px 60px -24px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111214; --card:#1A1C1F; --sunk:#16181A;
+  --line:#282B30; --line-2:#383C42;
+  --ink:#F2F2F0; --ink-2:#A2A7AF; --ink-3:#71767E;
+  --accent:#FF6A44; --accent-soft:#2A1A15; --accent-line:#5A3226;
+  --ok:#4ECB93; --ok-soft:#12251E;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.3), 0 4px 12px -6px rgba(0,0,0,.5);
+  --shadow-md:0 2px 4px rgba(0,0,0,.3), 0 14px 32px -14px rgba(0,0,0,.6);
+  --shadow-lg:0 4px 8px rgba(0,0,0,.3), 0 28px 60px -24px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--sans); font-size:16px; line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{margin:0; font-weight:650; letter-spacing:-.028em; line-height:1.14;}
+p{margin:0;}
+img{display:block; max-width:100%;}
+a{color:inherit;}
+
+/* 按钮：近黑主色 + 全圆角 + 轻微弹性按压 */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  height:46px; padding:0 24px; border-radius:var(--r-pill);
+  background:var(--ink); color:var(--paper); border:1px solid transparent;
+  font-family:var(--sans); font-size:15px; font-weight:600; letter-spacing:-.01em;
+  text-decoration:none; white-space:nowrap; cursor:pointer;
+  transition:transform .18s var(--bounce), box-shadow .2s var(--ease), background .2s, opacity .2s;
+  box-shadow:var(--shadow-sm);
+}
+.btn:hover:not(:disabled){transform:translateY(-2px); box-shadow:var(--shadow-md);}
+.btn:active:not(:disabled){transform:translateY(0) scale(.97);}
+.btn:disabled{opacity:.4; cursor:not-allowed; transform:none; box-shadow:none;}
+.btn:focus-visible{outline:2.5px solid var(--accent); outline-offset:3px;}
+.btn.soft{background:var(--card); color:var(--ink); border-color:var(--line-2); box-shadow:var(--shadow-sm);}
+.btn.soft:hover:not(:disabled){border-color:var(--ink-3);}
+.btn.accent{background:var(--accent); color:#fff;}
+.btn.sm{height:38px; padding:0 17px; font-size:14px;}
+.btn.lg{height:54px; padding:0 30px; font-size:16.5px;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important;}
+  html{scroll-behavior:auto !important;}
+}
+
+/* 需要切到英文时先藏住 body，避免中文闪一下（site.js 应用完就放开） */
+html.i18n-pending body{visibility:hidden;}
+
+/* ── 右上角的双档控件 ── */
+.ctl{display:flex; align-items:center; gap:6px; flex-shrink:0;}
+.seg{display:flex; background:var(--sunk); border-radius:var(--r-pill); padding:3px; gap:2px;}
+.seg button{
+  border:0; background:transparent; color:var(--ink-3); cursor:pointer;
+  font-family:var(--sans); font-size:12px; font-weight:600; line-height:1;
+  padding:6px 10px; border-radius:var(--r-pill); transition:background .2s, color .2s;
+  display:grid; place-items:center; min-width:30px;
+}
+.seg button:hover{color:var(--ink);}
+.seg button[aria-pressed="true"]{background:var(--card); color:var(--ink); box-shadow:var(--shadow-sm);}
+.seg button svg{width:15px; height:15px; display:block;}
+.seg button:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+@media (max-width:520px){
+  .seg button{padding:6px 8px; min-width:28px;}
+  .ctl .seg.lang button{font-size:11.5px;}
+}

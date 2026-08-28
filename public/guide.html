@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="zh" data-title-key="t.guide">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>不写代码，做一个会画图的 AI · 图腾 Totem</title>
+<meta name="description" content="你只负责说话和拍板，代码交给 Claude Code 或 Codex。七句话，做出一个会画吉祥物标志的 AI，并发到公网。" />
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#F4F4F2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111214" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="/fonts.css">
+<link rel="stylesheet" href="/tokens.css">
+<script>
+(function(){var d=document.documentElement;try{
+var t=localStorage.getItem('totem-theme')||'system';if(t!=='system')d.dataset.theme=t;
+var l=localStorage.getItem('totem-lang');
+if(!l)l=(navigator.language||'zh').toLowerCase().indexOf('zh')===0?'zh':'en';
+d.dataset.lang=l;if(l!=='zh')d.classList.add('i18n-pending');
+}catch(e){d.dataset.lang='zh';}})();
+</script>
+<style>
+.wrap{max-width:820px; margin:0 auto; padding:0 24px;}
+
+nav{position:sticky; top:0; z-index:50; height:64px; background:color-mix(in oklab,var(--paper) 86%,transparent); backdrop-filter:blur(16px) saturate(150%); border-bottom:1px solid transparent; transition:border-color .3s;}
+nav.stuck{border-bottom-color:var(--line);}
+nav .wrap{display:flex; align-items:center; gap:12px; height:100%; max-width:1120px;}
+.brand{display:flex; align-items:center; gap:9px; font-weight:650; font-size:17px; letter-spacing:-.025em; text-decoration:none;}
+.brand .mk{width:26px; height:26px; border-radius:8px; box-shadow:var(--shadow-sm); transition:transform .4s var(--bounce);}
+.brand:hover .mk{transform:rotate(-8deg) scale(1.08);}
+nav .sp{margin-left:auto;}
+
+.head{padding:clamp(40px,6vw,76px) 0 clamp(24px,3vw,36px);}
+.head h1{font-size:clamp(30px,4.8vw,48px); letter-spacing:-.035em; text-wrap:balance;}
+.head .sub{margin-top:16px; color:var(--ink-2); font-size:clamp(16px,1.8vw,18.5px); line-height:1.7;}
+.head .sub b{color:var(--ink); font-weight:650;}
+
+/* 分工说明 */
+.split{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:28px 0 0;}
+.who{background:var(--card); border-radius:var(--r-lg); padding:20px 22px; box-shadow:var(--shadow-sm);}
+.who h3{font-size:16px; margin-bottom:10px;}
+.who.you h3{color:var(--accent);}
+.who ul{margin:0; padding-left:17px; color:var(--ink-2); font-size:14.5px; line-height:1.75;}
+.who li{margin:3px 0;}
+
+/* 步骤 */
+.step{scroll-margin-top:80px; margin:clamp(44px,5vw,64px) 0;}
+.step > .hd{display:flex; align-items:center; gap:13px; margin-bottom:14px;}
+.no{width:34px; height:34px; border-radius:var(--r-pill); background:var(--ink); color:var(--paper); display:grid; place-items:center; font-weight:700; font-size:15px; flex-shrink:0;}
+.step h2{font-size:clamp(21px,2.6vw,27px); letter-spacing:-.028em;}
+.step .lead{color:var(--ink-2); font-size:15.5px; line-height:1.75; margin:0 0 18px;}
+.step p{color:var(--ink-2); font-size:15px; line-height:1.75; margin:0 0 12px;}
+.step ul{color:var(--ink-2); font-size:15px; line-height:1.75; margin:0 0 12px; padding-left:19px;}
+.step li{margin:5px 0;}
+.step strong{color:var(--ink); font-weight:650;}
+.step a{color:var(--accent); text-decoration:none;} .step a:hover{text-decoration:underline;}
+code{font-family:var(--mono); font-size:13px; background:var(--sunk); padding:2px 6px; border-radius:6px;}
+
+/* 你要说的话：做成一条消息气泡 */
+.say{margin:0 0 16px;}
+.say .tag{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-3); margin-bottom:8px;}
+.say .tag .cp{margin-left:auto; border:1px solid var(--line-2); background:var(--card); color:var(--ink-2);
+  border-radius:var(--r-pill); font-family:var(--sans); font-size:12px; font-weight:600; padding:5px 13px;
+  cursor:pointer; transition:border-color .18s, color .18s, transform .18s var(--bounce);}
+.say .tag .cp:hover{border-color:var(--accent); color:var(--accent); transform:translateY(-1px);}
+.say .tag b{color:var(--accent); font-weight:650;}
+.bubble{
+  position:relative; background:var(--ink); color:var(--paper);
+  border-radius:var(--r-lg); border-bottom-right-radius:8px;
+  padding:18px 20px; font-size:15px; line-height:1.75; white-space:pre-wrap;
+  box-shadow:var(--shadow-md);
+}
+.bubble em{font-style:normal; background:rgba(255,255,255,.16); border-radius:5px; padding:1px 6px;}
+
+/* 检查点 */
+.check{background:var(--ok-soft); border-radius:var(--r-lg); padding:16px 18px; margin:0 0 14px; font-size:14.5px; line-height:1.7; color:var(--ink-2);}
+.check b{display:block; color:var(--ok); font-weight:650; margin-bottom:5px;}
+.oops{background:var(--accent-soft); border-radius:var(--r-lg); padding:16px 18px; margin:0 0 14px; font-size:14.5px; line-height:1.7; color:var(--ink-2);}
+.oops b{display:block; color:var(--accent); font-weight:650; margin-bottom:5px;}
+.oops .mini{margin-top:9px; background:var(--card); border-radius:var(--r-md); padding:11px 74px 11px 13px; font-size:14px; color:var(--ink); position:relative;}
+.oops .mini .cp{position:absolute; top:8px; right:8px; border:1px solid var(--line-2); background:var(--card); color:var(--ink-3); border-radius:var(--r-pill); font-family:var(--sans); font-size:11.5px; padding:3px 9px; cursor:pointer;}
+.oops .mini .cp:hover{border-color:var(--accent); color:var(--accent);}
+.note{background:var(--card); border-radius:var(--r-lg); padding:16px 18px; margin:0 0 14px; font-size:14.5px; line-height:1.7; color:var(--ink-2); box-shadow:var(--shadow-sm);}
+.note b{display:block; color:var(--ink); font-weight:650; margin-bottom:5px;}
+
+.done{background:var(--card); border-radius:var(--r-lg); box-shadow:var(--shadow-sm); padding:clamp(26px,3vw,36px); margin:56px 0 0;}
+.done h2{font-size:24px;} .done p{margin-top:11px; color:var(--ink-2); font-size:15.5px; line-height:1.75;}
+.done .acts{display:flex; gap:10px; margin-top:22px; flex-wrap:wrap;}
+footer{border-top:1px solid var(--line); padding:26px 0 44px; margin-top:60px;}
+footer .wrap{display:flex; flex-wrap:wrap; gap:8px 22px; font-size:13px; color:var(--ink-3); max-width:1120px;}
+footer a{color:var(--ink-2); text-decoration:none;} footer a:hover{color:var(--accent);}
+
+@media (max-width:720px){
+  .wrap{padding:0 18px;}
+  .split{grid-template-columns:1fr;}
+  .bubble{font-size:14.5px; padding:16px 17px;}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="wrap">
+    <a class="brand" href="/"><img class="mk" src="/brandmark.webp" alt="" width="96" height="96"><span data-i18n="brand">图腾</span></a>
+    <span class="sp" data-controls></span>
+    <a class="btn sm" href="/app" data-i18n="cta.open">打开工作台</a>
+  </div>
+</nav>
+
+<header class="head">
+  <div class="wrap">
+    <h1 data-i18n="g.h1">不写代码，做一个会画图的 AI</h1>
+    <p class="sub" data-i18n-html="g.sub">你不需要看懂任何代码。打开 <b>Claude Code</b> 或 <b>Codex</b>，把下面的话一句一句发给它，它写代码，你负责拍板。全程大约两小时，最后你会拿到一个能发给别人的网址。</p>
+    <div class="split">
+      <div class="who you">
+        <h3 data-i18n="g.youdo">你做的事</h3>
+        <ul data-i18n-html="g.youlist">
+          <li>去后台点一下，拿一把密钥</li>
+          <li>把下面的话复制给 AI</li>
+          <li>看图，说好看还是不好看</li>
+          <li>决定要不要给网页加把锁</li>
+        </ul>
+      </div>
+      <div class="who">
+        <h3 data-i18n="g.aido">AI 做的事</h3>
+        <ul data-i18n-html="g.ailist">
+          <li>写全部代码</li>
+          <li>装环境、装依赖</li>
+          <li>部署、发布、排错</li>
+          <li>出问题了自己改</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- 准备 -->
+<section class="step" id="s0">
+  <div class="hd"><span class="no">0</span><h2 data-i18n="s0.h">先准备三样东西</h2></div>
+  <p class="lead" data-i18n="s0.l">这三件事 AI 替你做不了，因为都要你本人登录。加起来大概十分钟。</p>
+
+  <p data-i18n-html="s0.p1"><strong>一、装 Claude Code 或 Codex。</strong>随便哪个都行，就是那个能在你电脑上帮你写代码的 AI。装完在你想放项目的地方打开它。</p>
+
+  <p data-i18n-html="s0.p2"><strong>二、拿一把密钥。</strong>打开 ZooClaw App，走 <strong>Settings → API Keys → Create API Key</strong>，起个名字比如 <code>my-agent</code>，然后<strong>立刻复制</strong>那串 <code>zct_</code> 开头的字符。</p>
+
+  <div class="oops" data-i18n-html="o1"><b>这串东西只会出现一次</b>关掉页面就再也看不到了。当场存到备忘录或密码管理器里。真丢了也不用慌，回同一个页面点 Rotate 换一把新的就行。<br><br>另外它很值钱，<strong>只发给你自己电脑上的 AI，不要发到任何群里、也不要贴到网页上</strong>。</div>
+
+  <p data-i18n-html="s0.p3"><strong>三、注册一个 Vercel 账号。</strong>去 <a href="https://vercel.com" target="_blank" rel="noopener">vercel.com</a> 用 GitHub 账号登录一下就行，免费的。这是最后用来把网页发出去的地方。</p>
+</section>
+
+<!-- 1 -->
+<section class="step" id="s1">
+  <div class="hd"><span class="no">1</span><h2 data-i18n="s1.h">让它把地基搭好</h2></div>
+  <p class="lead" data-i18n="s1.l">第一句话，让 AI 建项目、装好东西、验证密钥能用。</p>
+
+  <div class="say">
+    <div class="tag"><b data-i18n="g.copythis">复制这段</b><span data-i18n="g.sendto">发给 Claude Code / Codex</span><button class="cp" data-i18n="g.copy">复制</button></div>
+    <div class="bubble" data-i18n-html="b1">我想做一个会画图的 AI Agent，跑在 ZooClaw 这个平台上，最后要做成网页发到公网。我不懂代码，全部交给你，遇到要我决定的事再问我。
+
+先做第一步：
+1. 在当前目录建一个新项目
+2. 去 GitHub 仓库 SerendipityOneInc/zoowork-sdk-skills 把 ZooClaw 的官方说明书下载到项目里，你写代码前先读它，别凭记忆写
+3. 装好 ZooClaw 的 SDK
+4. 我的密钥是 <em>zct_把你的密钥粘在这里</em>，帮我存好，绝对不要写进代码文件里
+
+装完之后，用最省的一个调用确认密钥是好的，然后告诉我结果。</div>
+  </div>
+
+  <div class="check" data-i18n-html="c1"><b>你应该看到</b>它最后会列出一串模型名字，类似 <code>litellm/claude-sonnet-5</code> 这样的。看到列表就说明密钥没问题，可以往下走。</div>
+
+  <div class="oops" data-i18n-html="o2"><b>如果它说密钥无效</b>八成是复制的时候少了几个字符。回后台重新复制一次，或者直接换一把新的。跟它说：<div class="mini"><button class="cp" data-i18n="g.copy">复制</button>密钥好像不对，我重新给你一个：zct_新的密钥</div></div>
+</section>
+
+<!-- 2 -->
+<section class="step" id="s2">
+  <div class="hd"><span class="no">2</span><h2 data-i18n="s2.h">告诉它你想要什么本事</h2></div>
+  <p class="lead" data-i18n="s2.l">这一步决定你的 AI 会干什么。这里以「画吉祥物标志」为例，用一份现成的开源规范。</p>
+
+  <p data-i18n-html="s2.p">下面这段里，中间那几条「必须写清楚的」是<strong>别人已经踩过的坑</strong>。你不用懂它们的意思，原样复制过去就行，AI 看得懂。</p>
+
+  <div class="say">
+    <div class="tag"><b data-i18n="g.copythis">复制这段</b><span data-i18n="g.next">接着发</span><button class="cp" data-i18n="g.copy">复制</button></div>
+    <div class="bubble" data-i18n-html="b2">很好，接着做第二步。
+
+我想让它会画 IP 吉祥物 Logo。用这份现成的开源规范：
+https://github.com/s1dashu/ip-as-logo-skill
+把它做成 Agent 的技能，规范本身一个字都不要改。
+
+另外给 Agent 写一份人设，人设里必须写清楚下面几条，这些是别人踩过的坑：
+
+- 画图只能用沙箱里那个同步的命令行脚本，绝对不许用异步的 image_generate 工具，否则会一直空等，最后一张图都交不出来
+- 每画完一张，必须重新打开这张图看一遍再评价，不许没看就说合格
+- 六张全说合格是不正常的，判废不丢人，隐瞒才丢人
+- 判废的自动重画一次，不要停下来问我要不要重画
+- 每张画完必须发布产物。这条写成命令句，不许写成「如果有这个工具就用，没有就跳过」，那样它会直接跳过
+- 出图用 1024 见方
+
+写完先给我看一眼人设，我确认后再往下。</div>
+  </div>
+
+  <div class="check" data-i18n-html="c2"><b>你应该看到</b>它会把人设念给你听。你不用逐字读，扫一眼确认里面确实有「不许用异步工具」「必须自己看图」「判废自动重画」这几条就行。</div>
+
+  <div class="note" data-i18n-html="n1"><b>想做别的？</b>把上面那个规范链接换成别的就行。写文案、做数据分析、剪视频，流程完全一样，只有这一步换内容。</div>
+</section>
+
+<!-- 3 -->
+<section class="step" id="s3">
+  <div class="hd"><span class="no">3</span><h2 data-i18n="s3.h">让它跑起来</h2></div>
+  <p class="lead" data-i18n="s3.l">把 Agent 送上云，并且当场试一次。</p>
+
+  <div class="say">
+    <div class="tag"><b data-i18n="g.copythis">复制这段</b><span data-i18n="g.next">接着发</span><button class="cp" data-i18n="g.copy">复制</button></div>
+    <div class="bubble" data-i18n-html="b3">可以，按这份人设部署上云。
+
+注意几件事：
+- 每一步做完都要读回来确认真的成了，有几个调用即使没成也会返回成功
+- 用固定的幂等键，不要每次部署都建一个新的 Agent 出来
+- 部署好之后，第一次碰它必须是发一句对话，不要先跑命令去看环境
+
+部署完直接试一次：让它给一个做冷萃咖啡的品牌设计吉祥物，客群是城市白领，要清爽、有点酷、不甜腻。把它给的方向念给我听。</div>
+  </div>
+
+  <div class="check" data-i18n-html="c3"><b>你应该看到</b>它会给你<strong>三个不同的方向</strong>，每个一句话，比如「酷企鹅 · 呼应冷萃的冷感 · 圆头小企鹅加短翼」。然后问你要不要开始画六张。</div>
+
+  <div class="oops" data-i18n-html="o3"><b>如果它直接开始画了</b>说明人设里「先给方向再动笔」那条没生效。跟它说：<div class="mini"><button class="cp" data-i18n="g.copy">复制</button>它跳过了给方向这一步，直接开始画了。人设里加一条：必须先给三个方向、等我点头才能动笔。</div></div>
+</section>
+
+<!-- 4 -->
+<section class="step" id="s4">
+  <div class="hd"><span class="no">4</span><h2 data-i18n="s4.h">让它真的画出来</h2></div>
+  <p class="lead" data-i18n="s4.l">这一步最花时间，六张图加上返工大概十五分钟。中间你可以去泡杯咖啡。</p>
+
+  <div class="say">
+    <div class="tag"><b data-i18n="g.copythis">复制这段</b><span data-i18n="g.next">接着发</span><button class="cp" data-i18n="g.copy">复制</button></div>
+    <div class="bubble" data-i18n-html="b4">方向可以，让它画六张。
+
+画完之后告诉我：一共画了几张、几张合格、几张返工了、返工的是因为什么。</div>
+  </div>
+
+  <div class="check" data-i18n-html="c4"><b>你应该看到</b>它报告类似「六张里只有一张合格，五张返工，问题分别是四角有杂色块、耳朵尖了、主体摆得太居中」这样的<strong>具体理由</strong>，而不是笼统的「都符合规范」。<br><br>返工之后总数会变多，比如六张变十二张（原图加重画版都留着），这是对的。</div>
+
+  <div class="oops" data-i18n-html="o4"><b>如果它说六张全部合格</b>这几乎不可能，说明它根本没看图。跟它说：<div class="mini"><button class="cp" data-i18n="g.copy">复制</button>六张全合格不太可能。请你逐张重新打开图片看一遍，对照规范认真核对，尤其看四个角有没有杂色块、有没有尖角、主体是不是从下角出画。然后重新给结论。</div></div>
+
+  <div class="oops" data-i18n-html="o5"><b>如果它卡住很久没动静</b>大概率是用了异步的画图工具在空等。跟它说：<div class="mini"><button class="cp" data-i18n="g.copy">复制</button>你是不是用了异步的 image_generate 工具？换成沙箱里那个同步的命令行脚本，一张一张画，画完再画下一张。</div></div>
+</section>
+
+<!-- 5 -->
+<section class="step" id="s5">
+  <div class="hd"><span class="no">5</span><h2 data-i18n="s5.h">看图，说好看还是不好看</h2></div>
+  <p class="lead" data-i18n-html="s5.l">这是<strong>只有你能做</strong>的一步。前面它自己检查的是「有没有违反规范」，好不好看得你说了算。</p>
+
+  <div class="say">
+    <div class="tag"><b data-i18n="g.copythis">复制这段</b><span data-i18n="g.next">接着发</span><button class="cp" data-i18n="g.copy">复制</button></div>
+    <div class="bubble" data-i18n-html="b5">把图给我看看。</div>
+  </div>
+
+  <p data-i18n="s5.p">看完之后你可以直接用大白话继续，不用讲专业术语：</p>
+  <ul data-i18n-html="s5.eg">
+    <li>「第二个我喜欢，但颜色太暗了，换亮一点的」</li>
+    <li>「第一个方向再画六个不一样的」</li>
+    <li>「都不太行，换个动物试试」</li>
+    <li>「把背景换成粉色」</li>
+  </ul>
+
+  <div class="note" data-i18n-html="n2"><b>一个判断标准</b>把图缩到手机 App 图标那么小，还认得出是什么，才算好标志。放大好看不算数。你可以让它直接缩给你看：<div class="mini" style="margin-top:9px"><button class="cp" data-i18n="g.copy">复制</button>把这几张缩到 App 图标那么小给我看，看看还认不认得出。</div></div>
+</section>
+
+<!-- 6 -->
+<section class="step" id="s6">
+  <div class="hd"><span class="no">6</span><h2 data-i18n="s6.h">做成网页发出去</h2></div>
+  <p class="lead" data-i18n="s6.l">到这里只有你能在终端里用它。这一步做成网页，别人也能用。</p>
+
+  <div class="say">
+    <div class="tag"><b data-i18n="g.copythis">复制这段</b><span data-i18n="g.next">接着发</span><button class="cp" data-i18n="g.copy">复制</button></div>
+    <div class="bubble" data-i18n-html="b6">很好，现在做成一个网页，发布到公网上。
+
+要求：
+- 我的密钥只能待在服务器上，绝对不能出现在网页里，别人看网页源码也看不到
+- 页面上不要出现代码、模型名、编号这类我看不懂的东西，说人话
+- 手机上也要好用
+- 画图要好几分钟，别用一个请求从头等到尾，会超时
+
+发布用 Vercel。发好之后把网址给我。</div>
+  </div>
+
+  <div class="check" data-i18n-html="c5"><b>你应该看到</b>它给你一个 <code>xxx.vercel.app</code> 的网址。用手机打开试试，能建项目、能对话、能看到图，就成了。</div>
+
+  <div class="oops" data-i18n-html="o6"><b>如果它中途让你登录 Vercel</b>正常，浏览器会自己弹出来，用 GitHub 账号点一下同意就行。这一步只有你能做。</div>
+</section>
+
+<!-- 7 -->
+<section class="step" id="s7">
+  <div class="hd"><span class="no">7</span><h2 data-i18n="s7.h">决定要不要加把锁</h2></div>
+  <p class="lead" data-i18n-html="s7.l">刚发出去的网址<strong>是完全公开的</strong>，任何人拿到都能打开，也就意味着任何人都能用你的额度画图。</p>
+
+  <p data-i18n="s7.p">想留个门槛就跟它说：</p>
+  <div class="say">
+    <div class="tag"><b data-i18n="g.copythis">复制这段</b><span data-i18n="g.next">接着发</span><button class="cp" data-i18n="g.copy">复制</button></div>
+    <div class="bubble" data-i18n-html="b7">给这个网页加个密码，只有知道密码的人能打开。密码我自己定，你告诉我在哪设。</div>
+  </div>
+
+  <div class="oops" data-i18n-html="o7"><b>验证的时候一定要用正式网址</b>预览链接和正式网址的保护规则不一样。别拿预览链接测出来的结果推断正式的。让它当着你的面用正式网址试一次，确认没密码打不开。</div>
+</section>
+
+<!-- 卡住 -->
+<section class="step" id="s8">
+  <div class="hd"><span class="no">?</span><h2 data-i18n="s8.h">任何时候卡住了</h2></div>
+  <p class="lead" data-i18n="s8.l">你不需要看懂错误信息。把下面这句发过去就行。</p>
+
+  <div class="say">
+    <div class="tag"><b data-i18n="s8.t1">万能句</b><span data-i18n="s8.t1b">卡住时发这个</span><button class="cp" data-i18n="g.copy">复制</button></div>
+    <div class="bubble" data-i18n-html="b8">报错了，你先自己看看是什么问题，能修就直接修，不要问我技术细节。如果需要我做什么（比如去某个网站点个按钮、给你一个密码），直接告诉我点哪里就行。</div>
+  </div>
+
+  <p data-i18n="s8.p">另外两句也很有用：</p>
+  <div class="say">
+    <div class="tag"><b data-i18n="s8.t2">它说做完了但你没看到效果</b><button class="cp" data-i18n="g.copy">复制</button></div>
+    <div class="bubble" data-i18n-html="b9">你说做完了，但我这边看不到效果。你自己实际验证一遍，把你验证的过程和结果告诉我，不要只说「已完成」。</div>
+  </div>
+  <div class="say">
+    <div class="tag"><b data-i18n="s8.t3">它开始跟你讲技术细节</b><button class="cp" data-i18n="g.copy">复制</button></div>
+    <div class="bubble" data-i18n-html="b10">这些我听不懂。用大白话告诉我：现在是好了还是没好，我下一步要做什么。</div>
+  </div>
+</section>
+
+<div class="done">
+  <h2 data-i18n="done.h">就这些</h2>
+  <p data-i18n="done.p1">回头看，你真正做的只有四件事：去后台拿了一把密钥、复制了七段话、看图说了几句好看不好看、决定要不要加密码。剩下的都是它干的。</p>
+  <p data-i18n="done.p2">把第 2 步那个规范链接换掉，同一套流程能做出完全不同的 AI。</p>
+  <div class="acts">
+    <a class="btn" href="/app" data-i18n="done.b1">先看看成品长什么样</a>
+    <a class="btn soft" href="/" data-i18n="done.b2">回到首页</a>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <span data-i18n="g.foot">这里每一句「如果出问题」都是真出过的问题</span>
+    <span data-i18n-html="foot.credit">设计规范来自 <a href="https://github.com/s1dashu/ip-as-logo-skill" target="_blank" rel="noopener">ip-as-logo</a>，MIT 开源</span>
+    <span style="margin-left:auto"><a href="/app" data-i18n="cta.open">打开工作台</a></span>
+  </div>
+</footer>
+
+<script>
+new IntersectionObserver(([e]) => document.getElementById('nav').classList.toggle('stuck', !e.isIntersecting),
+  { rootMargin: '-1px 0px 0px 0px', threshold: 1 }).observe(document.querySelector('.head'));
+
+/* 复制：气泡里的占位符也一起复制，用户自己替换 */
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('.cp');
+  if (!b) return;
+  const box = b.closest('.tag') ? b.closest('.say').querySelector('.bubble') : b.parentElement;
+  const text = [...box.childNodes]
+    .filter(n => !(n.nodeType === 1 && n.classList?.contains('cp')))
+    .map(n => n.textContent).join('').trim();
+  try {
+    await navigator.clipboard.writeText(text);
+    const old = b.textContent; b.textContent = '已复制';
+    setTimeout(() => { b.textContent = old; }, 1400);
+  } catch { b.textContent = '复制失败'; setTimeout(() => { b.textContent = '复制'; }, 1400); }
+});
+</script>
+<script src="/i18n.js"></script>
+<script src="/site.js"></script>
+</body>
+</html>

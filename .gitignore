@@ -1,0 +1,31 @@
+# 密钥，绝对不能进版本库
+.env
+.env.*
+!.env.example
+
+# 依赖与构建产物
+node_modules/
+.build/
+*.zip
+
+# Vercel 本地缓存
+.vercel/
+
+# 系统
+.DS_Store
+
+# 本地临时产物
+public/showcase/*.png
+
+# 早期另做的招聘 agent，与本产品无关，只保留在本地不进仓库
+recruitment-specialist/
+public/recruitment.html
+api/chat.js
+server.mjs
+scripts/build-recruitment-agent.mjs
+scripts/attach-skills.mjs
+scripts/smoke-test.mjs
+scripts/probes/demo.mjs
+
+# 技能文档的旧版备份
+.agents/skills/*.bak/
