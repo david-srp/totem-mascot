@@ -1,13 +1,19 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose'
 
-const ACCESS_TEAM_DOMAIN = process.env.CF_ACCESS_TEAM_DOMAIN || 'rebyte-admin.cloudflareaccess.com'
+const ACCESS_TEAM_DOMAIN = process.env.CF_ACCESS_TEAM_DOMAIN
 const ACCESS_AUD = process.env.CF_ACCESS_AUD
 const IDENTITY_URL = process.env.TOTEM_IDENTITY_URL
 const IDENTITY_TOKEN = process.env.TOTEM_IDENTITY_SERVICE_TOKEN
-const ALLOWED_DOMAIN = process.env.TOTEM_ALLOWED_EMAIL_DOMAIN || 'srp.one'
+const ALLOWED_DOMAIN = process.env.TOTEM_ALLOWED_EMAIL_DOMAIN
 
-const jwks = createRemoteJWKSet(new URL(`https://${ACCESS_TEAM_DOMAIN}/cdn-cgi/access/certs`))
+let jwks = null
 const cache = new Map()
+
+function accessJwks() {
+  if (!ACCESS_TEAM_DOMAIN) throw new Error('CF_ACCESS_TEAM_DOMAIN 未配置')
+  jwks ??= createRemoteJWKSet(new URL(`https://${ACCESS_TEAM_DOMAIN}/cdn-cgi/access/certs`))
+  return jwks
+}
 
 function tokenFrom(req) {
   const assertion = req.headers['cf-access-jwt-assertion']
@@ -29,7 +35,8 @@ async function accessIdentity(req) {
   const token = tokenFrom(req)
   if (!token) throw Object.assign(new Error('authentication required'), { statusCode: 401 })
   if (!ACCESS_AUD) throw new Error('CF_ACCESS_AUD 未配置')
-  const { payload } = await jwtVerify(token, jwks, {
+  if (!ALLOWED_DOMAIN) throw new Error('TOTEM_ALLOWED_EMAIL_DOMAIN 未配置')
+  const { payload } = await jwtVerify(token, accessJwks(), {
     issuer: `https://${ACCESS_TEAM_DOMAIN}`,
     audience: ACCESS_AUD,
   })

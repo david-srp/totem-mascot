@@ -1,5 +1,6 @@
 /* 线上逐会话验证：拉 history + artifacts，用与前端相同的规则算残留 */
-const B = 'https://totem.impo.ai'
+const B = process.env.TOTEM_APP_URL
+if (!B) throw new Error('请通过 TOTEM_APP_URL 指定当前 Builder 自己部署的 App URL')
 const IMG = /https?:\/\/[^\s)<>"'）】，。]+?\.(?:png|jpe?g|webp|gif|avif)/gi
 const ids = process.argv.slice(2)
 for (const id of ids) {
