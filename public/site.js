@@ -101,11 +101,60 @@
   /* 跟随系统时，系统切换要实时反映到按钮上 */
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (getTheme()==='system') sync(); });
 
+  /* ── 素材随机轮播 ──
+     给容器加 data-rotate，它下面的 <img> 就是槽位。
+     进页面随机换一组，之后每 5 秒再换一波；每张错开一点，读起来像一波而不是齐刷刷跳。 */
+  const ART = ['A1','A1r','A2','A2r','B1','B1r','B2','B2r','C1','C1r','C2','C2r','owl'];
+  const SRC = (n) => '/showcase/' + n + '.webp';
+
+  function pick(n, avoid){
+    const pool = ART.filter((x) => !avoid || !avoid.includes(x));
+    const src = pool.length >= n ? pool : ART.slice();
+    const out = [];
+    const bag = src.slice();
+    while (out.length < n && bag.length) out.push(bag.splice(Math.floor(Math.random() * bag.length), 1)[0]);
+    return out;
+  }
+  const preload = (names) => names.forEach((n) => { const i = new Image(); i.src = SRC(n); });
+
+  function startRotators(){
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelectorAll('[data-rotate]').forEach((box) => {
+      const slots = [...box.querySelectorAll('img')];
+      if (!slots.length) return;
+
+      let cur = pick(slots.length);
+      slots.forEach((im, i) => { im.src = SRC(cur[i]); });   // 进页面就先随机一组
+      if (reduce || slots.length >= ART.length) return;       // 降级：不自动轮换
+
+      let next = pick(slots.length, cur);
+      preload(next);
+
+      setInterval(() => {
+        if (document.hidden) return;                          // 页面在后台时不空转
+        const use = next;
+        slots.forEach((im, i) => {
+          setTimeout(() => {
+            im.classList.add('swapping');                     // 先淡出，避免两张图同时半透明糊在一起
+            setTimeout(() => {
+              im.src = SRC(use[i]);
+              im.classList.remove('swapping');
+            }, 340);
+          }, i * 140);                                        // 每张错开，形成一波
+        });
+        cur = use;
+        next = pick(slots.length, cur);
+        preload(next);
+      }, 5000);
+    });
+  }
+
   function boot(){
     if (!html.dataset.zhTitle) html.dataset.zhTitle = document.title;
     renderControls();
     applyLang(getLang());
     sync();
+    startRotators();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();

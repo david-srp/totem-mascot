@@ -117,3 +117,8 @@ html.i18n-pending body{visibility:hidden;}
   .seg button{padding:6px 8px; min-width:28px;}
   .ctl .seg.lang button{font-size:11.5px;}
 }
+
+/* 素材轮播：淡出后换图再淡入，不做交叉淡入（两张不透明图同时半透明会糊成重影） */
+[data-rotate] img{transition:opacity .34s var(--ease);}
+[data-rotate] img.swapping{opacity:0;}
+@media (prefers-reduced-motion: reduce){ [data-rotate] img{transition:none;} }
