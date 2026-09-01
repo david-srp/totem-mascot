@@ -86,6 +86,10 @@ ensureAgent(identity)
 6. 用 `listAgentSkills()` 验证 Skill 已安装且 eligible。
 7. 把 `user_id → agent_id + identity_hash` 写入 D1。
 
+如果 Builder 切换了 ZooWork organization 或 API key，D1 中的旧 Agent ID 在新 organization 下会
+返回 404。应用把它视为 stale binding：先按 labels 在当前 organization 恢复，仍找不到才创建新
+Agent，并覆盖原 binding。应用用户身份继续保留，但旧 organization 中的 Session 不会自动迁移。
+
 浏览器不能提交 `user_id` 或 `agent_id`。App Worker 验证 Cloudflare Access identity 后，再从 D1
 解析 binding。
 
