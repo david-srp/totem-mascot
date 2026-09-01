@@ -1,6 +1,6 @@
-import { createZooclawClient } from '@zooclaw-agents/sdk'
+import { createZooworkClient } from '@zoowork-ai/sdk'
 import { writeFile } from 'node:fs/promises'
-const zc = createZooclawClient()
+const zc = createZooworkClient()
 const p = await zc.listArtifacts(process.env.IP_AGENT_ID, { sessionId: process.env.SID, limit: 100 })
 for (const a of p.artifacts) {
   const r = await fetch(a.url)

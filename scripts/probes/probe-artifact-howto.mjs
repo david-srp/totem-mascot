@@ -1,5 +1,5 @@
-import { createZooclawClient } from '@zooclaw-agents/sdk'
-const zc = createZooclawClient()
+import { createZooworkClient } from '@zoowork-ai/sdk'
+const zc = createZooworkClient()
 const agents = await zc.listAgents()
 
 // 1) 已跑通视频发布的 agent，看它的 persona 怎么写 artifact

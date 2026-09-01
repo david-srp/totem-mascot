@@ -146,9 +146,9 @@ footer a{color:var(--ink-2); text-decoration:none;} footer a:hover{color:var(--a
 
   <p data-i18n-html="s0.p1"><strong>一、装 Claude Code 或 Codex。</strong>随便哪个都行，就是那个能在你电脑上帮你写代码的 AI。装完在你想放项目的地方打开它。</p>
 
-  <p data-i18n-html="s0.p2"><strong>二、拿一把密钥。</strong>打开 ZooClaw App，走 <strong>Settings → API Keys → Create API Key</strong>，起个名字比如 <code>my-agent</code>，然后<strong>立刻复制</strong>那串 <code>zct_</code> 开头的字符。</p>
+  <p data-i18n-html="s0.p2"><strong>二、拿一把密钥。</strong>打开 ZooWork App，走 <strong>Settings → API Keys → Create API Key</strong>，起个名字比如 <code>my-agent</code>，然后<strong>立刻复制</strong>那串 <code>zct_</code> 开头的字符。</p>
 
-  <div class="oops" data-i18n-html="o1"><b>这串东西只会出现一次</b>关掉页面就再也看不到了。当场存到备忘录或密码管理器里。真丢了也不用慌，回同一个页面点 Rotate 换一把新的就行。<br><br>另外它很值钱，<strong>只发给你自己电脑上的 AI，不要发到任何群里、也不要贴到网页上</strong>。</div>
+  <div class="oops" data-i18n-html="o1"><b>这串东西只会出现一次</b>关掉页面就再也看不到了。当场存到密码管理器里。真丢了也不用慌，回同一个页面点 Rotate 换一把新的就行。<br><br>另外它很值钱，<strong>不要粘到聊天里。只写进项目中被 Git 忽略的 .env 文件</strong>。</div>
 
   <p data-i18n-html="s0.p3"><strong>三、注册一个 Cloudflare 账号。</strong>去 <a href="https://dash.cloudflare.com" target="_blank" rel="noopener">Cloudflare Dashboard</a> 注册并登录。这是最后用来把网页和 API 发出去的地方。</p>
 </section>
@@ -160,20 +160,20 @@ footer a{color:var(--ink-2); text-decoration:none;} footer a:hover{color:var(--a
 
   <div class="say">
     <div class="tag"><b data-i18n="g.copythis">复制这段</b><span data-i18n="g.sendto">发给 Claude Code / Codex</span><button class="cp" data-i18n="g.copy">复制</button></div>
-    <div class="bubble" data-i18n-html="b1">我想做一个会画图的 AI Agent，跑在 ZooClaw 这个平台上，最后要做成网页发到公网。我不懂代码，全部交给你，遇到要我决定的事再问我。
+    <div class="bubble" data-i18n-html="b1">我想做一个会画图的 AI Agent，跑在 ZooWork 这个平台上，最后要做成网页发到公网。我不懂代码，全部交给你，遇到要我决定的事再问我。
 
 先做第一步：
 1. 在当前目录建一个新项目
-2. 去 GitHub 仓库 SerendipityOneInc/zoowork-sdk-skills 把 ZooClaw 的官方说明书下载到项目里，你写代码前先读它，别凭记忆写
-3. 装好 ZooClaw 的 SDK
-4. 我的密钥是 <em>zct_把你的密钥粘在这里</em>，帮我存好，绝对不要写进代码文件里
+2. 按 https://zoowork.ai/docs/zh/get-started/quickstart 安装官方 ZooWork Skill，写代码前先读它，别凭记忆写
+3. 安装 <code>@zoowork-ai/sdk</code>
+4. 在项目里准备好 ignored 的 <code>.env</code>，变量名用 <code>ZOOWORK_API_KEY</code>。不要读取或打印 key；文件准备好后停下来让我自己填写
 
-装完之后，用最省的一个调用确认密钥是好的，然后告诉我结果。</div>
+我说填好之后，用 <code>listModels()</code> 确认密钥可用，然后告诉我结果。</div>
   </div>
 
   <div class="check" data-i18n-html="c1"><b>你应该看到</b>它最后会列出一串模型名字，类似 <code>litellm/claude-sonnet-5</code> 这样的。看到列表就说明密钥没问题，可以往下走。</div>
 
-  <div class="oops" data-i18n-html="o2"><b>如果它说密钥无效</b>八成是复制的时候少了几个字符。回后台重新复制一次，或者直接换一把新的。跟它说：<div class="mini"><button class="cp" data-i18n="g.copy">复制</button>密钥好像不对，我重新给你一个：zct_新的密钥</div></div>
+  <div class="oops" data-i18n-html="o2"><b>如果它说密钥无效</b>回后台重新复制一次，或者直接 Rotate 换一把新的，然后自己更新 .env。只告诉 AI“我已经更新好了”，不要把 key 发进聊天。</div>
 </section>
 
 <!-- 2 -->

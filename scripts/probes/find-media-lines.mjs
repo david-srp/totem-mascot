@@ -1,7 +1,7 @@
-import { createZooclawClient } from '@zooclaw-agents/sdk'
+import { createZooworkClient } from '@zoowork-ai/sdk'
 import { allEvents } from '../api/_events.js'
-import { assistantText } from '@zooclaw-agents/sdk'
-const zc = createZooclawClient()
+import { assistantText } from '@zoowork-ai/sdk'
+const zc = createZooworkClient()
 const ss = await zc.listSessions(process.env.IP_AGENT_ID)
 for (const s of ss.slice(0, 10)) {
   const evs = await allEvents(s.session_id)

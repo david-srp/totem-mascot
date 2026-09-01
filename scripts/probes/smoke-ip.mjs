@@ -1,5 +1,5 @@
-import { createZooclawClient, assistantText, isRunFinished, runOutcome, toolCall } from '@zooclaw-agents/sdk'
-const zc = createZooclawClient()
+import { createZooworkClient, assistantText, isRunFinished, runOutcome, toolCall } from '@zoowork-ai/sdk'
+const zc = createZooworkClient()
 const AGENT_ID = process.env.IP_AGENT_ID
 if (!AGENT_ID) throw new Error('set IP_AGENT_ID')
 
@@ -28,7 +28,7 @@ async function turn(agentId, sessionId, cursor) {
 
 console.error('=== turn 1: 请求做 Logo（应给出三个方向，不应直接生成）===')
 const session = await zc.createSession(AGENT_ID, {
-  initial_events: [{ type: 'user.message', content: '给 ZooClaw 做一个 IP 吉祥物 Logo。ZooClaw 是一个托管 AI agent 的云平台，开发者用它把自己的 agent 跑起来并接上自己的产品。面向开发者，气质要可靠、聪明、有点俏皮。' }],
+  initial_events: [{ type: 'user.message', content: '给 ZooWork 做一个 IP 吉祥物 Logo。ZooWork 是一个托管 AI agent 的云平台，开发者用它把自己的 agent 跑起来并接上自己的产品。面向开发者，气质要可靠、聪明、有点俏皮。' }],
   metadata: { origin: 'deploy-smoke-test' },
 })
 console.error('session:', session.session_id)

@@ -1,6 +1,6 @@
-import { createZooclawClient } from '@zooclaw-agents/sdk'
+import { createZooworkClient } from '@zoowork-ai/sdk'
 
-const zc = createZooclawClient()
+const zc = createZooworkClient()
 const [AGENT_ID, MODEL_SUBSTR] = process.argv.slice(2)
 if (!AGENT_ID || !MODEL_SUBSTR) throw new Error('usage: node switch-model.mjs <agent_id> <model-substring>')
 

@@ -19,9 +19,11 @@
   "author": "",
   "license": "ISC",
   "type": "module",
-  "engines": { "node": "22.x" },
+  "engines": {
+    "node": "22.x"
+  },
   "dependencies": {
-    "@zooclaw-agents/sdk": "^0.2.0",
+    "@zoowork-ai/sdk": "^0.5.1",
     "jose": "^5.9.6"
   },
   "devDependencies": {

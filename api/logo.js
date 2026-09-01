@@ -1,6 +1,6 @@
 // POST /api/logo            投递一轮消息，立刻返回（六张图要几分钟，不能长连接）
 // GET  /api/logo?session=…  按游标拉增量事件，客户端轮询
-import { assistantText, toolCall, isRunFinished, runOutcome } from '@zooclaw-agents/sdk'
+import { assistantText, toolCall, isRunFinished, runOutcome } from '@zoowork-ai/sdk'
 import { zc, readJson, send, route } from './_zc.js'
 import { eventsAfter, userText } from './_events.js'
 import { findAgent } from './_agent.js'

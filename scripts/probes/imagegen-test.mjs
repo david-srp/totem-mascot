@@ -1,5 +1,5 @@
-import { createZooclawClient } from '@zooclaw-agents/sdk'
-const zc = createZooclawClient()
+import { createZooworkClient } from '@zoowork-ai/sdk'
+const zc = createZooworkClient()
 const PROMPT = `Create one complete full-bleed 1:1 square IP mascot logo artwork.
 Backdrop: cover the entire canvas with one visible, fully opaque solid deep navy. Keep deep navy clearly visible in all four square corners and every open area surrounding the mascot.
 Subject: place one highly simplified round-headed owl mascot over the backdrop, reduced to one rounded continuous silhouette and one defining feature.

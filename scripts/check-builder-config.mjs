@@ -31,7 +31,7 @@ function findSecretFields(value, path = '') {
   return fields
 }
 
-requireEnv('ZOOCLAW_API_KEY', (value) => /^zct_[A-Za-z0-9_-]{8,}$/.test(value))
+requireEnv('ZOOWORK_API_KEY', (value) => /^zct_[A-Za-z0-9_-]{8,}$/.test(value))
 requireEnv('CLOUDFLARE_API_TOKEN', (value) => value.length >= 20)
 requireEnv('CLOUDFLARE_ACCOUNT_ID', (value) => /^[a-f0-9]{32}$/i.test(value))
 requireEnv('TOTEM_IDENTITY_SERVICE_TOKEN', (value) => value.length >= 32)

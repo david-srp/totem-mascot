@@ -1,5 +1,5 @@
-import { createZooclawClient, assistantText, isRunFinished, runOutcome, toolCall } from '@zooclaw-agents/sdk'
-const zc = createZooclawClient()
+import { createZooworkClient, assistantText, isRunFinished, runOutcome, toolCall } from '@zoowork-ai/sdk'
+const zc = createZooworkClient()
 const A = process.env.IP_AGENT_ID, S = process.env.IP_SESSION_ID
 await zc.postEvents(A, S, [{ type: 'user.message', content: '你刚才把六张全部标成 recommended，但没有回看过任何一张图。现在按规范逐张打开 .web.jpg 预览，对照判废清单认真核对一遍，重新给出评估和 candidates manifest。' }])
 let reply = ''

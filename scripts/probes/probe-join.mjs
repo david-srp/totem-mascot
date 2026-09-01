@@ -1,6 +1,6 @@
 import { allEvents } from '../api/_events.js'
-import { createZooclawClient } from '@zooclaw-agents/sdk'
-const zc = createZooclawClient()
+import { createZooworkClient } from '@zoowork-ai/sdk'
+const zc = createZooworkClient()
 const A = process.env.IP_AGENT_ID, S = process.env.SID
 const evs = await allEvents(S)
 const att = evs.filter(e => e.eventType === 'attachment.created')

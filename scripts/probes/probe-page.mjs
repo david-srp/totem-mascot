@@ -1,5 +1,5 @@
-import { createZooclawClient } from '@zooclaw-agents/sdk'
-const zc = createZooclawClient()
+import { createZooworkClient } from '@zoowork-ai/sdk'
+const zc = createZooworkClient()
 const p = await zc.listEventsPage(process.env.IP_AGENT_ID, process.env.SID, { limit: 5 })
 console.log('page keys:', Object.keys(p))
 console.log('hasMore:', p.hasMore, '| nextCursor:', JSON.stringify(p.nextCursor))

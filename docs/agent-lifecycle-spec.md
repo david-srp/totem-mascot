@@ -3,7 +3,7 @@
 状态：Implemented and deployed
 适用项目：Totem，以及未来 `demos/` 下需要“每用户一个 Agent”的官方样板项目
 
-每个 Builder 使用自己的 ZooClaw organization 和 Cloudflare 资源。从零部署和端到端验证见
+每个 Builder 使用自己的 ZooWork organization 和 Cloudflare 资源。从零部署和端到端验证见
 [`builder-setup.md`](builder-setup.md)。
 
 ## 1. 目标

@@ -1,5 +1,5 @@
-import { createZooclawClient } from '@zooclaw-agents/sdk'
-const zc = createZooclawClient()
+import { createZooworkClient } from '@zoowork-ai/sdk'
+const zc = createZooworkClient()
 const A = process.env.IP_AGENT_ID
 const out = await zc.exec(A, ['bash','-lc',
   `ls -la /skills/designer/ ; echo "--- scripts ---" ; ls -la /skills/designer/scripts/ 2>&1 | head

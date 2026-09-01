@@ -73,7 +73,7 @@ export interface Manifest {
   items?: Array<Direction & Candidate>
 }
 
-/** GET /api/logo 增量事件（已由服务端从 ZooClaw 原始事件翻译成这几种） */
+/** GET /api/logo 增量事件（已由服务端从 ZooWork 原始事件翻译成这几种） */
 export type ApiEvent =
   | { kind: 'user'; seq: number; text: string }
   | { kind: 'media'; seq: number; fileName: string; mimeType: string; size: number }

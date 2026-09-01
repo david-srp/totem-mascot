@@ -1,6 +1,6 @@
 // 只打印环境变量的【名字】和长度，绝不打印值。
-import { createZooclawClient } from '@zooclaw-agents/sdk'
-const zc = createZooclawClient()
+import { createZooworkClient } from '@zoowork-ai/sdk'
+const zc = createZooworkClient()
 const AGENT_ID = process.env.IP_AGENT_ID
 
 const out = await zc.exec(AGENT_ID, ['bash', '-lc',

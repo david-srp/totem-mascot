@@ -1,13 +1,13 @@
 // 共享：ZooWork 客户端和 Node-style handler 小工具。Cloudflare Worker 通过 adapter 调用。
-import { createZooclawClient, ZooclawError } from '@zooclaw-agents/sdk'
+import { createZooworkClient, ZooworkError } from '@zoowork-ai/sdk'
 
 let client
 
 // Worker 首次部署时 secret 可能尚未创建，因此不能在 module load 阶段读取 API key。
-// Proxy 在第一次真正调用 SDK 方法时初始化 client；ZOOCLAW_API_KEY 仍只存在服务端。
+// Proxy 在第一次真正调用 SDK 方法时初始化 client；ZOOWORK_API_KEY 仍只存在服务端。
 export const zc = new Proxy({}, {
   get(_target, property) {
-    client ??= createZooclawClient()
+    client ??= createZooworkClient()
     const value = client[property]
     return typeof value === 'function' ? value.bind(client) : value
   },
@@ -27,7 +27,7 @@ export function send(res, code, obj) {
 }
 
 export function errMsg(e) {
-  return e instanceof ZooclawError ? `${e.status} ${e.type}: ${e.message}` : String(e?.message ?? e)
+  return e instanceof ZooworkError ? `${e.status} ${e.type}: ${e.message}` : String(e?.message ?? e)
 }
 
 /** 包装 handler：统一错误落地 */

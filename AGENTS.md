@@ -1,15 +1,15 @@
 # Totem Builder instructions
 
-Totem 是“每个应用用户一个 ZooClaw Agent，并由 Builder 统一分发 Skill”的样板项目。
-开始任何 ZooClaw 或 Cloudflare 操作前，先阅读：
+Totem 是“每个应用用户一个 ZooWork Agent，并由 Builder 统一分发 Skill”的样板项目。
+开始任何 ZooWork 或 Cloudflare 操作前，先阅读：
 
 1. `docs/builder-setup.md`：从自己的账号部署独立实例；
 2. `docs/agent-lifecycle-spec.md`：每用户 Agent、Skill latest 和 Identity lazy sync；
-3. `.agents/skills/zooclaw-managed-agents/SKILL.md`：ZooClaw SDK 的准确调用方式。
+3. `.agents/skills/zoowork-managed-agents/SKILL.md`：ZooWork SDK 的准确调用方式。
 
 ## 每个 Builder 的资源必须隔离
 
-每个 Builder 使用自己的 ZooClaw API key、Cloudflare account、Workers、D1、Access application
+每个 Builder 使用自己的 ZooWork API key、Cloudflare account、Workers、D1、Access application
 和 hostname。不要复用文档、Git 历史或其他环境中的 resource ID、domain、token 或 URL。
 
 真实配置只存在以下 ignored 文件：
@@ -43,7 +43,7 @@ Cloudflare 变更只针对 `.env` 中 `CLOUDFLARE_ACCOUNT_ID` 对应的 account�
 npm run skill:publish
 ```
 
-第一次执行会在当前 ZooClaw key 所属 organization 创建 org Skill。后续执行发布同一 Skill 的新
+第一次执行会在当前 ZooWork key 所属 organization 创建 org Skill。后续执行发布同一 Skill 的新
 版本。User Agent 都 unpinned 跟随 `latest`，不要遍历 Agent，不要重新调用 `putAgentSkill`。
 
 ## 修改 Identity

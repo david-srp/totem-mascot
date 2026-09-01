@@ -1,5 +1,5 @@
-import { createZooclawClient, assistantText, messageText, toolCall, isRunFinished, runOutcome } from '@zooclaw-agents/sdk'
-const zc = createZooclawClient()
+import { createZooworkClient, assistantText, messageText, toolCall, isRunFinished, runOutcome } from '@zoowork-ai/sdk'
+const zc = createZooworkClient()
 const evs = await zc.listAllEvents(process.env.IP_AGENT_ID, process.env.IP_SESSION_ID)
 console.error('total events:', evs.length)
 // 找最后一个 user.message 的位置，之后的都是本轮
