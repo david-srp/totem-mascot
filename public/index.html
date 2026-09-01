@@ -19,7 +19,9 @@
 (function(){var d=document.documentElement;try{
 var t=localStorage.getItem('totem-theme')||'system';if(t!=='system')d.dataset.theme=t;
 var l=localStorage.getItem('totem-lang');
-if(!l)l=(navigator.language||'zh').toLowerCase().indexOf('zh')===0?'zh':'en';
+if(!l){/* 只有简体中文留中文，繁体(zh-TW/HK/MO/Hant)和其他语言一律走英文 */
+var g=(navigator.languages&&navigator.languages[0]||navigator.language||'zh').toLowerCase();
+l=(g.indexOf('zh')===0&&g.indexOf('hant')<0&&!/^zh-(tw|hk|mo)\b/.test(g))?'zh':'en';}
 d.dataset.lang=l;if(l!=='zh')d.classList.add('i18n-pending');
 }catch(e){d.dataset.lang='zh';}})();
 </script>
