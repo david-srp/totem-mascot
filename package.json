@@ -7,9 +7,13 @@
     "dev:api": "node --env-file=.env --env-file=.env.local scripts/dev-logo-server.mjs",
     "dev:web": "npm --prefix web run dev",
     "build": "npm --prefix web run build",
-    "deploy": "npm run build && wrangler deploy",
-    "identity:deploy": "npm --prefix infra/identity-worker run deploy",
-    "identity:migrate": "npm --prefix infra/identity-worker run db:migrate"
+    "builder:check": "node --env-file=.env --env-file-if-exists=.env.cloudflare --env-file-if-exists=.env.local scripts/check-builder-config.mjs",
+    "skill:list": "node --env-file=.env scripts/catalog.mjs",
+    "skill:publish": "node --env-file=.env scripts/upload-skill.mjs",
+    "cf": "node --env-file=.env --env-file-if-exists=.env.cloudflare --env-file-if-exists=.env.local node_modules/wrangler/bin/wrangler.js",
+    "deploy": "npm run build && npm run cf -- deploy --config wrangler.jsonc",
+    "identity:deploy": "npm run cf -- deploy --config infra/identity-worker/wrangler.jsonc",
+    "identity:migrate": "npm run cf -- d1 migrations apply DB --remote --config infra/identity-worker/wrangler.jsonc"
   },
   "keywords": [],
   "author": "",

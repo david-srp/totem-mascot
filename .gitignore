@@ -3,6 +3,10 @@
 .env.*
 !.env.example
 
+# 每个 Builder 自己的 Cloudflare 资源配置。tracked 文件只保留 *.example.jsonc。
+wrangler.jsonc
+infra/identity-worker/wrangler.jsonc
+
 # 依赖与构建产物
 node_modules/
 .build/
@@ -32,4 +36,3 @@ scripts/probes/demo.mjs
 public/app.html
 public/assets/
 .vercel
-.env*

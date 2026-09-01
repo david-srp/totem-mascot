@@ -3,6 +3,9 @@
 状态：Implemented and deployed
 适用项目：Totem，以及未来 `demos/` 下需要“每用户一个 Agent”的官方样板项目
 
+每个 Builder 使用自己的 ZooClaw organization 和 Cloudflare 资源。从零部署和端到端验证见
+[`builder-setup.md`](builder-setup.md)。
+
 ## 1. 目标
 
 Totem 是 ZooWork Managed Agents 的官方样板项目。它只回答一个问题：
@@ -130,7 +133,7 @@ Identity 被复制到每个 User Agent，因此使用 lazy sync：
 
 ```bash
 # 修改 ip-as-logo/skills/ip-as-logo/
-node --env-file=.env scripts/upload-skill.mjs
+npm run skill:publish
 ```
 
 修改 Identity：
