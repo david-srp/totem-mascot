@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "totem-identity",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-31",
+  "workers_dev": true,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "totem",
+      "database_id": "15a3f807-1b34-4c5a-a46f-b6f27b4b3e1a",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

@@ -6,10 +6,8 @@
 # 依赖与构建产物
 node_modules/
 .build/
+.wrangler/
 *.zip
-
-# Vercel 本地缓存
-.vercel/
 
 # 系统
 .DS_Store
@@ -29,3 +27,9 @@ scripts/probes/demo.mjs
 
 # 技能文档的旧版备份
 .agents/skills/*.bak/
+
+# /app 的构建产物（源码在 web/，npm run build 生成）
+public/app.html
+public/assets/
+.vercel
+.env*

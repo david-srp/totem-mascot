@@ -1,7 +1,11 @@
 // 项目 = 一个 ZooClaw session。项目名写在 session metadata（写入即固定，正好当标题用）。
-import { zc, AGENT_ID, readJson, send, route } from './_zc.js'
+// agent 是每用户一个：第一次建项目时懒创建（见 _agent.js），之后按 uid 查回来复用。
+import { zc, readJson, send, route } from './_zc.js'
+import { ensureAgent, findAgent } from './_agent.js'
+import { identityOf } from './_identity.js'
 
-export const config = { maxDuration: 30 }
+// 首个项目要连带建 agent（创建 + 启动 + 挂技能），给足时间
+export const config = { maxDuration: 60 }
 
 
 /**
@@ -35,11 +39,16 @@ function framedBrief(title, brief) {
 }
 
 export default route(async (req, res) => {
+  const identity = await identityOf(req)
+
   if (req.method === 'GET') {
+    const agentId = await findAgent(identity)
+    if (!agentId) return send(res, 200, { projects: [] }) // 还没建过项目，agent 也还不存在
+
     // listSessions 每页 50、按 updated_at 倒序、无游标；取前两页够用
     const rows = []
     for (const page of [1, 2]) {
-      const r = await zc.listSessions(AGENT_ID, { page })
+      const r = await zc.listSessions(agentId, { page })
       rows.push(...r)
       if (r.length < 50) break
     }
@@ -58,7 +67,8 @@ export default route(async (req, res) => {
   if (req.method === 'POST') {
     const { title, message } = await readJson(req)
     if (!title || typeof title !== 'string') return send(res, 400, { error: 'title required' })
-    const s = await zc.createSession(AGENT_ID, {
+    const agentId = await ensureAgent(identity)
+    const s = await zc.createSession(agentId, {
       // metadata 是写入即固定的（没有 patchSession），所以标题在建项目时就定下来
       metadata: {
         app: 'ip-as-logo',
@@ -73,11 +83,13 @@ export default route(async (req, res) => {
   if (req.method === 'DELETE') {
     const id = new URL(req.url, 'http://x').searchParams.get('session')
     if (!id) return send(res, 400, { error: 'session required' })
+    const agentId = await findAgent(identity)
+    if (!agentId) return send(res, 404, { error: 'no agent for this user' })
     // 有在跑的 run 时 archiveSession 是 409 session_running：先打断，再重试到真正停下
-    try { await zc.postEvents(AGENT_ID, id, [{ type: 'user.interrupt' }]) } catch {}
+    try { await zc.postEvents(agentId, id, [{ type: 'user.interrupt' }]) } catch {}
     let archived = false
     for (let i = 0; i < 8 && !archived; i++) {
-      try { await zc.archiveSession(AGENT_ID, id); archived = true }
+      try { await zc.archiveSession(agentId, id); archived = true }
       catch (e) {
         if (e?.type !== 'session_running') throw e
         await new Promise((r) => setTimeout(r, 1500))

@@ -54,7 +54,7 @@ window.I18N = {
     's0.l':'Your AI cannot do these for you because each one needs you to log in. About ten minutes total.',
     's0.p1':'<strong>One. Install Claude Code or Codex.</strong> Either works. It is the AI that writes code on your machine. Once installed, open it in the folder where you want the project.',
     's0.p2':'<strong>Two. Get a key.</strong> Open the ZooClaw app and go to <strong>Settings → API Keys → Create API Key</strong>. Name it something like <code>my-agent</code>, then <strong>copy it immediately</strong>. It starts with <code>zct_</code>.',
-    's0.p3':'<strong>Three. Get a Vercel account.</strong> Sign in at <a href="https://vercel.com" target="_blank" rel="noopener">vercel.com</a> with GitHub. It is free. This is what puts your page online at the end.',
+    's0.p3':'<strong>Three. Get a Cloudflare account.</strong> Sign in at the <a href="https://dash.cloudflare.com" target="_blank" rel="noopener">Cloudflare Dashboard</a>. This is what puts your page and API online at the end.',
     'o1':'<b>This string is shown exactly once</b>Close the page and it is gone for good. Save it to your notes or password manager right now. If you do lose it, no drama: hit Rotate on the same page for a fresh one.<br><br>It is also valuable, so <strong>only give it to the AI on your own machine. Never paste it into a group chat or onto a web page.</strong>',
 
     's1.h':'Get the foundations laid',
@@ -92,9 +92,9 @@ window.I18N = {
 
     's6.h':'Turn it into a page and publish it',
     's6.l':'So far only you can use it, from a terminal. This step makes it something other people can open.',
-    'b6':'Great, now turn this into a web page and publish it.\n\nRequirements:\n- My key stays on the server. It must never appear in the page, not even in the source someone can view\n- No code, model names or internal ids on the page. Write it in plain language\n- It has to work properly on a phone\n- Drawing takes several minutes, so do not hold one request open the whole time or it will time out\n\nPublish with Vercel and give me the link when it is live.',
-    'c5':'<b>What you should see</b>A link ending in <code>xxx.vercel.app</code>. Open it on your phone: if you can create a project, have a conversation and see the images, you are done.',
-    'o6':'<b>If it asks you to sign in to Vercel</b>Normal. A browser window opens, approve it with your GitHub account. Only you can do this bit.',
+    'b6':'Great, now turn this into a web page and publish it.\n\nRequirements:\n- My key stays on the server. It must never appear in the page, not even in the source someone can view\n- No code, model names or internal ids on the page. Write it in plain language\n- It has to work properly on a phone\n- Drawing takes several minutes, so do not hold one request open the whole time or it will time out\n\nPublish with Cloudflare Workers. Keep the key only in a Worker secret, and give me the link when it is live.',
+    'c5':'<b>What you should see</b>A Cloudflare Workers URL or your own domain. Open it on your phone: if you can create a project, have a conversation and see the images, you are done.',
+    'o6':'<b>If it asks you to sign in to Cloudflare</b>Normal. Complete the login and authorization, then ask the AI to continue the deployment.',
 
     's7.h':'Decide whether it needs a lock',
     's7.l':'The link you just got is <strong>completely public</strong>. Anyone who has it can open it, which also means anyone can spend your quota generating images.',

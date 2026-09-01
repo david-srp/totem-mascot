@@ -1,15 +1,20 @@
 // 打开项目时把整段历史还原成多轮对话，并给出可继续轮询的游标。
-import { assistantText, messageText, toolCall, isRunFinished, runOutcome } from '@zooclaw-agents/sdk'
+import { assistantText, toolCall, isRunFinished, runOutcome } from '@zooclaw-agents/sdk'
 import { send, route } from './_zc.js'
 import { allEvents, userText } from './_events.js'
+import { findAgent } from './_agent.js'
+import { identityOf } from './_identity.js'
 
 export const config = { maxDuration: 60 }
 
 export default route(async (req, res) => {
+  const identity = await identityOf(req)
   const sid = new URL(req.url, 'http://x').searchParams.get('session')
   if (!sid) return send(res, 400, { error: 'session required' })
+  const agentId = await findAgent(identity)
+  if (!agentId) return send(res, 404, { error: 'no agent for this user' })
 
-  const events = await allEvents(sid)
+  const events = await allEvents(agentId, sid)
 
   const turns = []
   let cur = null

@@ -1,0 +1,14 @@
+{
+  "name": "totem-identity-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "db:migrate": "wrangler d1 migrations apply totem --remote"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260901.1",
+    "typescript": "^5.9.2",
+    "wrangler": "^4.34.0"
+  }
+}

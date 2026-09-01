@@ -1,17 +1,23 @@
 // POST /api/logo            投递一轮消息，立刻返回（六张图要几分钟，不能长连接）
 // GET  /api/logo?session=…  按游标拉增量事件，客户端轮询
 import { assistantText, toolCall, isRunFinished, runOutcome } from '@zooclaw-agents/sdk'
-import { zc, AGENT_ID, readJson, send, route } from './_zc.js'
+import { zc, readJson, send, route } from './_zc.js'
 import { eventsAfter, userText } from './_events.js'
+import { findAgent } from './_agent.js'
+import { identityOf } from './_identity.js'
 
 export const config = { maxDuration: 60 }
 
 export default route(async (req, res) => {
+  const identity = await identityOf(req)
+  const agentId = await findAgent(identity)
+  if (!agentId) return send(res, 404, { error: 'no agent for this user — 先建项目' })
+
   if (req.method === 'POST') {
     const { sessionId, message } = await readJson(req)
     if (!message || typeof message !== 'string') return send(res, 400, { error: 'message required' })
     if (!sessionId) return send(res, 400, { error: 'sessionId required — 先建项目' })
-    await zc.postEvents(AGENT_ID, sessionId, [
+    await zc.postEvents(agentId, sessionId, [
       { type: 'user.message', content: message, idempotency_key: `web-${sessionId}-${Date.now()}` },
     ])
     return send(res, 200, { sessionId })
@@ -23,7 +29,7 @@ export default route(async (req, res) => {
     const afterSeq = Number(url.searchParams.get('afterSeq') ?? -1)
     if (!sessionId) return send(res, 400, { error: 'session required' })
 
-    const { events, lastSeq } = await eventsAfter(sessionId, afterSeq)
+    const { events, lastSeq } = await eventsAfter(agentId, sessionId, afterSeq)
 
     const out = []
     let done = false

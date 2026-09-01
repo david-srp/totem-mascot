@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+<title>图腾 Totem · 工作台</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#F4F4F2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111214" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="/fonts.css">
+<link rel="stylesheet" href="/tokens.css">
+<script>
+/* 主题必须在首帧前同步落到 <html> 上，否则会闪一下。语言同理。 */
+(function(){var d=document.documentElement;try{
+var t=localStorage.getItem('totem-theme')||'system';if(t!=='system')d.dataset.theme=t;
+var l=localStorage.getItem('totem-lang');
+if(!l){/* 只有简体中文留中文，繁体(zh-TW/HK/MO/Hant)和其他语言一律走英文 */
+var g=(navigator.languages&&navigator.languages[0]||navigator.language||'zh').toLowerCase();
+l=(g.indexOf('zh')===0&&g.indexOf('hant')<0&&!/^zh-(tw|hk|mo)\b/.test(g))?'zh':'en';}
+d.dataset.lang=l;
+}catch(e){d.dataset.lang='zh';}})();
+</script>
+</head>
+<body>
+<div id="root"></div>
+<script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
