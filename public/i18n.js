@@ -134,7 +134,7 @@ window.I18N = {
       download:'Download full size', drawingShort:'Drawing', viewAll:'See all {n}', count:'{n} images',
       pTidy:'Publishing the results', pCheck:'Checking image {n}', pDraw:'Drawing image {n}',
       pThink:'Thinking it through', pIdle:'Thinking',
-      noProj:'No projects yet', nameIt:'Give the project a name', removeQ:'Remove this project?',
+      noProj:'No projects yet', nameIt:'Give the project a name', removeQ:'Remove this project?', remove:'Remove',
       errPrefix:'Something went wrong: ',
       justNow:'just now', minAgo:'{n} min ago', hrAgo:'{n} h ago', dayAgo:'{n} d ago',
       q1:'Looks good, draw these three', q2:'Show me some other directions',

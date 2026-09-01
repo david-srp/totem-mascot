@@ -45,12 +45,26 @@ body{display:grid; grid-template-columns:264px minmax(0,1fr);}
 }
 .pitem:hover{background:var(--card);}
 .pitem.on{background:var(--card); color:var(--ink); box-shadow:var(--shadow-sm);}
-.pitem .t{font-weight:600; display:flex; align-items:center; gap:8px;}
-.pitem .t span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;}
+.pitem .t{font-weight:600; display:flex; align-items:center; gap:6px; min-width:0;}
+/* 只让标题撑开，别把删除键也算进去（之前这里写的是 .t span，把删除键一起撑满了） */
+.pitem .t .nm{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; min-width:0;}
 .pitem .m{font-size:12px; color:var(--ink-3); margin-top:2px;}
-.pitem .x{opacity:0; color:var(--ink-3); font-size:16px; line-height:1; padding:2px 4px; border-radius:6px; flex-shrink:0;}
-.pitem:hover .x{opacity:1;}
-.pitem .x:hover{background:var(--accent-soft); color:var(--accent);}
+.pitem .x{
+  flex:0 0 auto; width:24px; height:24px; margin:-2px -4px -2px 0;
+  display:grid; place-items:center; border-radius:50%;
+  color:var(--ink-3); font-size:15px; line-height:1; position:relative;
+  opacity:0; transform:scale(.85);
+  transition:opacity .16s, transform .16s var(--bounce), background .16s, color .16s;
+}
+.pitem:hover .x, .pitem:focus-within .x{opacity:.55; transform:none;}
+.pitem .x:hover{opacity:1; background:var(--accent-soft); color:var(--accent);}
+.pitem .x:active{transform:scale(.88);}
+/* 触屏没有 hover，不常显就等于删不掉 */
+@media (hover:none){
+  .pitem .x{opacity:.45; transform:none;}
+  /* 视觉仍是 24px，但把可点区域撑到 44px，符合触屏最小命中区 */
+  .pitem .x::after{content:""; position:absolute; inset:-10px;}
+}
 .side .foot{padding:12px 14px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:9px; align-items:flex-start;}
 .side .foot .links{font-size:12.5px; color:var(--ink-3);}
 .side .foot a{font-size:12.5px; color:var(--ink-3); text-decoration:none;}
@@ -396,7 +410,7 @@ const ZH = {
   recommend:'推荐', redone:'已重画', nearly:'还差点', redoV:'重画版',
   download:'下载高清图', drawingShort:'画着呢', viewAll:'查看全部 {n} 张', count:'{n} 张',
   pTidy:'正在整理成品', pCheck:'正在检查第 {n} 张', pDraw:'正在画第 {n} 张', pThink:'正在构思', pIdle:'正在思考',
-  noProj:'还没有项目', nameIt:'给项目起个名字吧', removeQ:'移除这个项目？', errPrefix:'出了点问题：',
+  noProj:'还没有项目', nameIt:'给项目起个名字吧', removeQ:'移除这个项目？', remove:'移除', errPrefix:'出了点问题：',
   justNow:'刚刚', minAgo:'{n} 分钟前', hrAgo:'{n} 小时前', dayAgo:'{n} 天前',
   q1:'可以，就画这三个方向', q2:'我想再看几个别的方向', q3:'第一个再画几张变化', q4:'先给我三个方向看看',
   proj:'项目',
@@ -548,7 +562,8 @@ function collect(){ let dirs=null,cands=null;
 function renderProjects(){
   $('plist').innerHTML = S.projects.map(p =>
     '<button class="pitem'+(p.id===S.pid?' on':'')+'" data-id="'+esc(p.id)+'">'+
-      '<div class="t"><span>'+esc(p.title)+'</span><span class="x" data-del="'+esc(p.id)+'" title="移除">×</span></div>'+
+      '<div class="t"><span class="nm">'+esc(p.title)+'</span>'+
+      '<span class="x" role="button" tabindex="0" data-del="'+esc(p.id)+'" aria-label="'+esc(tr('remove'))+'" title="'+esc(tr('remove'))+'">✕</span></div>'+
       '<div class="m">'+ago(p.updatedAt)+'</div></button>').join('')
     || '<div style="font-size:13px;color:var(--ink-3);padding:6px 8px">'+tr('noProj')+'</div>';
   // 空态顶栏的角标：有历史项目时才出现，第一次来的用户看不到多余东西
@@ -786,6 +801,10 @@ $('mYes').onclick=async()=>{
   }catch(e){ $('mErr').textContent=e.message; }
   finally{ $('mYes').disabled=false; }
 };
+// 删除键可聚焦，回车/空格也要能触发，否则键盘用户点不到
+$('plist').addEventListener('keydown',(e)=>{
+  if((e.key==='Enter'||e.key===' ')&&e.target.closest('[data-del]')){ e.preventDefault(); e.target.click(); }
+});
 $('plist').onclick=async(e)=>{
   const del=e.target.closest('[data-del]');
   if(del){ e.stopPropagation();
