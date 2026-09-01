@@ -4,13 +4,23 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev:api": "node --env-file=.env --env-file=.env.local scripts/dev-logo-server.mjs",
+    "dev:web": "npm --prefix web run dev",
+    "build": "npm --prefix web run build",
+    "deploy": "npm run build && wrangler deploy",
+    "identity:deploy": "npm --prefix infra/identity-worker run deploy",
+    "identity:migrate": "npm --prefix infra/identity-worker run db:migrate"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
+  "engines": { "node": "22.x" },
   "dependencies": {
-    "@zooclaw-agents/sdk": "^0.2.0"
+    "@zooclaw-agents/sdk": "^0.2.0",
+    "jose": "^5.9.6"
+  },
+  "devDependencies": {
+    "wrangler": "^4.127.1"
   }
 }

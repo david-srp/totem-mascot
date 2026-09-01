@@ -1,15 +1,20 @@
 // agent 用 artifact_publish 发布的原图：直接给浏览器可取的 URL，原分辨率、无大小上限。
-import { zc, AGENT_ID, send, route } from './_zc.js'
+import { zc, send, route } from './_zc.js'
+import { findAgent } from './_agent.js'
+import { identityOf } from './_identity.js'
 
 export const config = { maxDuration: 30 }
 
 export default route(async (req, res) => {
+  const identity = await identityOf(req)
   const sid = new URL(req.url, 'http://x').searchParams.get('session')
   if (!sid) return send(res, 400, { error: 'session required' })
+  const agentId = await findAgent(identity)
+  if (!agentId) return send(res, 200, { artifacts: [] })
 
   const rows = []
   for (let page = 1; page <= 4; page++) {
-    const p = await zc.listArtifacts(AGENT_ID, { sessionId: sid, page, limit: 100 })
+    const p = await zc.listArtifacts(agentId, { sessionId: sid, page, limit: 100 })
     rows.push(...(p.artifacts ?? []))
     if (!p.has_more) break
   }

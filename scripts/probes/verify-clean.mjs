@@ -1,5 +1,5 @@
 /* 线上逐会话验证：拉 history + artifacts，用与前端相同的规则算残留 */
-const B = 'https://totem-mascot.vercel.app'
+const B = 'https://totem.impo.ai'
 const IMG = /https?:\/\/[^\s)<>"'）】，。]+?\.(?:png|jpe?g|webp|gif|avif)/gi
 const ids = process.argv.slice(2)
 for (const id of ids) {

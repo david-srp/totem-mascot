@@ -3,17 +3,17 @@
 //  2) 最后一页的 nextCursor 是 null，所以 cursor 无法用来「从历史末尾续传」。
 // 因此：cursor 只用于翻页，增量判断一律靠单调递增的 seq。
 import { messageText } from '@zooclaw-agents/sdk'
-import { zc, AGENT_ID } from './_zc.js'
+import { zc } from './_zc.js'
 
 const MAX_PAGES = 40
 
 /** 抽干整个会话的事件（按 seq 升序、去重） */
-export async function allEvents(sessionId, { limit = 500 } = {}) {
+export async function allEvents(agentId, sessionId, { limit = 500 } = {}) {
   const seen = new Set()
   const out = []
   let cursor
   for (let i = 0; i < MAX_PAGES; i++) {
-    const page = await zc.listEventsPage(AGENT_ID, sessionId, cursor ? { cursor, limit } : { limit })
+    const page = await zc.listEventsPage(agentId, sessionId, cursor ? { cursor, limit } : { limit })
     for (const ev of page.events ?? []) {
       if (seen.has(ev.seq)) continue
       seen.add(ev.seq)
@@ -27,8 +27,8 @@ export async function allEvents(sessionId, { limit = 500 } = {}) {
 }
 
 /** seq 大于 afterSeq 的增量 */
-export async function eventsAfter(sessionId, afterSeq) {
-  const all = await allEvents(sessionId)
+export async function eventsAfter(agentId, sessionId, afterSeq) {
+  const all = await allEvents(agentId, sessionId)
   const n = Number.isFinite(afterSeq) ? afterSeq : -1
   return { events: all.filter((e) => e.seq > n), lastSeq: all.length ? all[all.length - 1].seq : n }
 }

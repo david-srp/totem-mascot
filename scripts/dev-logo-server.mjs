@@ -1,4 +1,4 @@
-// 本地跑真实的 Vercel handler，方便在浏览器里验证 UI。
+// 本地跑真实的 Node-style API handler，方便在浏览器里验证 UI。
 import http from 'node:http'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
@@ -12,7 +12,7 @@ const PUBLIC = path.resolve(import.meta.dirname, '../public')
 const PORT = Number(process.env.DEV_PORT ?? 5290)
 const TYPES = { '.html':'text/html; charset=utf-8', '.js':'text/javascript', '.css':'text/css', '.png':'image/png', '.jpg':'image/jpeg', '.svg':'image/svg+xml', '.webp':'image/webp', '.woff2':'font/woff2' }
 
-// 给 Node 的 res 补上 Vercel handler 用到的 status()/json()
+// 给 Node 的 res 补上 handler 用到的 status()/json()
 function shim(res){
   res.status = (c) => { res.statusCode = c; return res }
   res.json = (o) => { res.setHeader('content-type','application/json; charset=utf-8'); res.end(JSON.stringify(o)) }
