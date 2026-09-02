@@ -2,7 +2,7 @@
 //  1) listEventsPage 的【事件不带 cursor】，只有页级 nextCursor（streamEvents 才带，别照搬）；
 //  2) 最后一页的 nextCursor 是 null，所以 cursor 无法用来「从历史末尾续传」。
 // 因此：cursor 只用于翻页，增量判断一律靠单调递增的 seq。
-import { messageText } from '@zooclaw-agents/sdk'
+import { messageText } from '@zoowork-ai/sdk'
 import { zc } from './_zc.js'
 
 const MAX_PAGES = 40

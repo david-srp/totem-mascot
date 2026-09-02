@@ -1,6 +1,6 @@
-import { createZooclawClient } from '@zooclaw-agents/sdk'
+import { createZooworkClient } from '@zoowork-ai/sdk'
 import { writeFile } from 'node:fs/promises'
-const zc = createZooclawClient()
+const zc = createZooworkClient()
 const A = process.env.IP_AGENT_ID, SP = process.env.SP
 async function sh(s){ const o = await zc.exec(A, ['bash','-lc',s]); if(o.exit_code) throw new Error(o.stderr.slice(0,200)); return o.stdout }
 // 一次把六张预览图全部 base64 出来，用分隔符切开

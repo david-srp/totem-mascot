@@ -1,6 +1,6 @@
-import { createZooclawClient } from '@zooclaw-agents/sdk'
+import { createZooworkClient } from '@zoowork-ai/sdk'
 import { writeFile } from 'node:fs/promises'
-const zc = createZooclawClient()
+const zc = createZooworkClient()
 const A = process.env.IP_AGENT_ID
 const CHUNK = 140_000
 

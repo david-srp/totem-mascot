@@ -1,5 +1,5 @@
-import { createZooclawClient } from '@zooclaw-agents/sdk'
-const zc = createZooclawClient()
+import { createZooworkClient } from '@zoowork-ai/sdk'
+const zc = createZooworkClient()
 const a = await zc.getAgent(process.env.IP_AGENT_ID)
 const sk = await zc.listAgentSkills(process.env.IP_AGENT_ID)
 console.log('  agent      :', a.agent_id)

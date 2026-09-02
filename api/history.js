@@ -1,5 +1,5 @@
 // 打开项目时把整段历史还原成多轮对话，并给出可继续轮询的游标。
-import { assistantText, toolCall, isRunFinished, runOutcome } from '@zooclaw-agents/sdk'
+import { assistantText, toolCall, isRunFinished, runOutcome } from '@zoowork-ai/sdk'
 import { send, route } from './_zc.js'
 import { allEvents, userText } from './_events.js'
 import { findAgent } from './_agent.js'

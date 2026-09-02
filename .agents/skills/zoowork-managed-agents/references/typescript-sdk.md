@@ -1,38 +1,38 @@
 # TypeScript SDK surface
 
-All 51 methods on `ZooclawClient`, grouped by area, signatures exactly as `src/client.ts` declares
-them. The package is `@zooclaw-agents/sdk` - ESM only (no CJS `require` condition, no subpath
+All 58 methods on `ZooworkClient`, grouped by area, signatures exactly as `src/client.ts` declares
+them. The package is `@zoowork-ai/sdk` - ESM only (no CJS `require` condition, no subpath
 exports), zero runtime dependencies, `engines.node >= 20`, shipping `dist/index.d.ts`, which is the
 authority over anything here. `SKILL.md` has the mandatory flow; this file is for looking up a
 signature, a return shape, or whether a method exists.
 
 Twelve runtime values are exported and a test pins the list, so an import outside it fails:
-`createZooclawClient`, `DEFAULT_BASE_URL`, `ZooclawError`, `SESSION_EVENT_TYPES`, `normalizeEvent`,
+`createZooworkClient`, `DEFAULT_BASE_URL`, `ZooworkError`, `SESSION_EVENT_TYPES`, `normalizeEvent`,
 `isRunFinished`, `runOutcome`, `messageText`, `assistantText`, `thinkingText`, `toolCall`,
 `parseSSE`. Everything else is a `type`, and there are no error-code constants - see Errors.
 
 ## Client construction
 
 ```ts
-createZooclawClient(cfg: ZooclawConfig = {}): ZooclawClient   // cfg itself is optional
+createZooworkClient(cfg: ZooworkConfig = {}): ZooworkClient   // cfg itself is optional
 
-interface ZooclawConfig {
-  apiKey?: string    // falls back to ZOOCLAW_API_KEY; an empty ENV VAR counts as unset, an explicit apiKey: '' does not
-  baseUrl?: string   // falls back to ZOOCLAW_BASE_URL, then DEFAULT_BASE_URL; trailing slashes stripped
-  auth?: ZooclawAuth // { serviceToken } is deployment-internal, not available to API-key callers
+interface ZooworkConfig {
+  apiKey?: string    // falls back to ZOOWORK_API_KEY; an empty ENV VAR counts as unset, an explicit apiKey: '' does not
+  baseUrl?: string   // falls back to ZOOWORK_BASE_URL, then DEFAULT_BASE_URL (production) - leave unset unless pointing at a different deployment; trailing slashes stripped
+  auth?: ZooworkAuth // { serviceToken } is deployment-internal, not available to API-key callers
   fetch?: (input: string, init?: RequestInit) => Promise<Response>  // for edge runtimes and tests
 }
 
-export type ZooclawAuth = { serviceToken: string } | { apiKey: string }
-export const DEFAULT_BASE_URL = 'https://claw-interface.ecap.yesy.live/service/v1'
+export type ZooworkAuth = { serviceToken: string } | { apiKey: string }
+export const DEFAULT_BASE_URL = 'https://clawapi.ecap.gsmo.ai/service/v1'
 ```
 
-**The SDK reads exactly two environment variables: `ZOOCLAW_API_KEY` and `ZOOCLAW_BASE_URL`** -
-nothing else appears anywhere in the source. There is no `ZOOCLAW_ORG_ID`: the gateway derives the
+**The SDK reads exactly two environment variables: `ZOOWORK_API_KEY` and `ZOOWORK_BASE_URL`** -
+nothing else appears anywhere in the source. There is no `ZOOWORK_ORG_ID`: the gateway derives the
 tenant from the key, so an org id in your environment is dead configuration. Construction **throws a
-plain `Error`, not a `ZooclawError`**, when no key resolves - a missing key is a setup mistake, and
+plain `Error`, not a `ZooworkError`**, when no key resolves - a missing key is a setup mistake, and
 failing loudly here beats a 401 on whatever call runs first, but it does mean a `catch` narrowing on
-`instanceof ZooclawError` will not match it. That guard tests `cfg.apiKey !== undefined`, not
+`instanceof ZooworkError` will not match it. That guard tests `cfg.apiKey !== undefined`, not
 truthiness, so an explicit `apiKey: ''` - which is what `process.env.KEY ?? ''` hands you - slips
 past it and builds a client that sends an empty bearer and 401s on the first call. Only the
 environment-variable path maps `''` to unset. `DEFAULT_BASE_URL` already includes the `/service/v1`
@@ -117,6 +117,110 @@ any runtime the SDK targets, so a stalled gateway parks such a loop forever. The
 `actual_state`: it reports chat-channel health, `running` is not one of its values, and an API-only
 agent sits at `activating` permanently.
 
+## Channels
+
+Bind chat platforms (Feishu/Lark) to an API-created agent, so the same agent also answers
+people in the chat app. Verified against a live deployment 2026-08-25. Requires a gateway
+release still rolling out - a deployment without it answers 404 in a DIFFERENT
+envelope (`{"error":{"type":"not_found"}}` instead of this family's `{"code","detail"}`),
+which is how you tell "no channels here" from "not found".
+
+**Which platforms bind, and what `config` each needs** (probed 2026-08-25):
+
+| platform | `addChannel` | server-driven QR flow | `config` (camelCase) |
+|---|---|---|---|
+| `feishu` | 201 | yes — the only one here | `{appId, appSecret, domain}` when skipping the QR flow |
+| `slack` | 201 | **never will** | `{botToken:'xoxb-…', appToken:'xapp-…'}` both required |
+| `wecom` | 201 | not on this API yet | `{botId, secret}` both required |
+| `weixin`/`wechat` | **400** `channel.weixin_setup_required` | not on this API yet | — cannot bind here |
+| anything else | **400** `channel.invalid_request` | — | — |
+
+The two "no QR flow" cells are different facts. **Slack cannot have one**: a Slack app is
+created by a person on api.slack.com and its tokens only ever exist in that person's browser,
+so any guided setup — including the one in the ZooWork app — ends by having them paste the same
+two tokens you pass to `addChannel`. Slack therefore loses nothing here. **WeCom and WeChat do
+have QR flows in the product**, just not exposed on this API; WeCom still binds via
+`addChannel`, WeChat cannot be bound at all.
+
+```ts
+listChannels(agentId): Promise<AgentChannel[]>                       // [] for a pure API agent
+addChannel(agentId, { platform, account?, display_name?, dm_policy?, group_policy?, allow_from?, config? }): Promise<AgentChannel>
+updateChannel(agentId, platform, { account?, dm_policy?, group_policy?, enabled? }?): Promise<AgentChannel>
+removeChannel(agentId, platform, { account? }?): Promise<void>       // account defaults to 'default'
+
+startFeishuSetup(agentId, { brand?, account?, dm_policy?, group_policy? }?): Promise<FeishuSetupSession>
+pollFeishuSetup(agentId, sessionId): Promise<FeishuPollResult>
+cancelFeishuSetup(agentId, sessionId): Promise<void>
+waitForFeishuSetup(agentId, sessionId, { timeoutMs?, signal?, onPoll? }?): Promise<FeishuPollResult>
+```
+
+The Feishu QR device flow: `startFeishuSetup` answers `{ session_id, verification_uri_complete,
+expires_in, poll_interval }`. **The caller owns the UI** - render `verification_uri_complete`
+(usually as a QR code), then let `waitForFeishuSetup` drive the poll loop:
+
+```ts
+const setup = await zc.startFeishuSetup(agentId)
+renderQr(setup.verification_uri_complete)
+const done = await zc.waitForFeishuSetup(agentId, setup.session_id, {
+  timeoutMs: setup.expires_in * 1000,
+})
+if (done.status !== 'success') report(done.status) // 'expired' | 'denied' | 'error'
+```
+
+`waitForFeishuSetup` returns terminal statuses the server reports in the BODY
+(`success | expired | denied | error`) instead of throwing - a rejection is an outcome. Treat
+unknown statuses as still-in-flight. Observed defaults: `expires_in: 600`, `poll_interval: 5`.
+`brand: 'lark'` really switches the URI host to `open.larksuite.com`, and must match the
+workspace the person approves it in. The non-QR path is `addChannel` with the platform app's
+own credentials in `config` (platform-specific keys, passed through). `allow_from` is
+write-once at create - updates cannot touch it.
+
+Seven facts that bite, all of them verified the hard way:
+
+- **`account` names the binding, and the name is unique per USER across every agent.** One
+  active binding per (owner, platform, account), so taking `feishu`/`default` on one agent
+  takes it from all the others. Format is `^[a-z0-9][a-z0-9_-]{0,63}$` plus three reserved
+  words (`__proto__`, `prototype`, `constructor`), and nothing is normalized - capitals or
+  spaces are a `400`, not a cleanup. `'default'` is very likely already held by a binding the
+  same login made in the app, which the server refuses to adopt: `409 channel.conflict`.
+  `listChannels` is agent-scoped, so the SDK cannot pre-check a name - track your own. On the
+  QR path the clash lands AFTER someone has scanned, leaving a freshly registered Feishu app
+  behind in their workspace.
+
+- **WeChat cannot be bound through this API.** `weixin`/`wechat` answer
+  `400 channel.weixin_setup_required` telling you to use a QR flow, and that flow does not
+  exist here (`/channels/weixin/setup` is a 404). Do not follow the error message.
+
+- **`addChannel`'s `201` means STORED, not WORKING.** Credentials are NOT validated at bind
+  time: deliberately bogus ones returned `201` with `health:'unknown'`/`status:'configured'`,
+  then listed moments later as `health:'unhealthy'`/`status:'error'`. Never report success
+  off the create call - read `health`/`status` from a follow-up `listChannels`.
+- **A setup session can stop existing, and then polling 404s** with
+  `channel.feishu_session_not_found` instead of reporting a terminal status. Confirmed after
+  `cancelFeishuSetup`; whether natural expiry takes this path or reports `'expired'` is
+  UNOBSERVED. `waitForFeishuSetup` throws there - so a caller needs a `catch`, not just a
+  status switch.
+- **Three distinct 404 codes.** `channel.feishu_session_not_found` (QR session gone, start a
+  new one), `channel.not_found` (agent has no binding on that platform),
+  `service_api.not_found` (unknown agent, or unknown action). Match the `code`, not the status.
+- **A chat conversation and an API session are separate sessions with separate context.**
+  Binding a channel does not let API calls read the Feishu conversation or inject into it.
+- **`actual_state` starts moving once a channel is bound** - it reports that channel's
+  connectivity. It is STILL not an API-readiness signal; keep gating on `desired_state`.
+
+`addChannel` is idempotent but **not** an upsert: an identical body for the same
+`platform`+`account` answers 201 again and replays the binding you already have, while the same
+pair with a **changed** `config` answers `409 channel.conflict`. Rotating credentials therefore
+means `removeChannel` then `addChannel` - a plain re-add fails.
+
+`removeChannel` is **idempotent** (removing an absent binding is `200 {ok:true}`) while
+`updateChannel` is **not** (`404 channel.not_found`) - that asymmetry decides whether your
+cleanup path needs a `catch`. `dm_policy:'pairing'` is rejected with
+`400 channel.pairing_unsupported`. `updateChannel` returns the channel in its new state, and
+`enabled:false` also moves `status` to `'disabled'` and resets `health`. `deleteAgent`
+best-effort disables the agent's channels; a cleanup failure never turns the delete into an
+error, so unbind explicitly when a binding must die.
+
 ## Sessions
 
 One conversation. Every session method takes `agentId` first, because the route is
@@ -181,7 +285,7 @@ inputs) - old stored cursors only.
 `streamEvents` opens exactly one request and yields until the body ends. It does **not** reconnect,
 retry or back off; when the server closes on idle the generator returns, and resuming is your loop
 calling it again with `{ cursor }` from the last event's `cursor` token. A non-2xx response throws
-a `ZooclawError` with no `type`; an abort via `opts.signal` ends the generator cleanly rather than
+a `ZooworkError` with no `type`; an abort via `opts.signal` ends the generator cleanly rather than
 throwing.
 
 ## Skills
@@ -467,15 +571,15 @@ servers only. See `references/not-supported.md` - Credentials and vaults.
 ## Errors
 
 ```ts
-export class ZooclawError extends Error {
+export class ZooworkError extends Error {
   status: number
   type?: string      // absent, not undefined-valued, when the server sent no code
   constructor(status: number, message: string, type?: string)
 }
 ```
 
-`this.name` is `'ZooclawError'` and the class is a runtime export, so `instanceof` works; the one
-failure that is **not** a `ZooclawError` is the missing-key throw from `createZooclawClient`.
+`this.name` is `'ZooworkError'` and the class is a runtime export, so `instanceof` works; the one
+failure that is **not** a `ZooworkError` is the missing-key throw from `createZooworkClient`.
 **There are two error vocabularies, because there are two envelopes.** The SDK unpacks both into the
 same class, but the spelling differs by family:
 
@@ -493,5 +597,5 @@ apart. Never match on message text: it is prose, it is not stable, and the same 
 you differently worded depending on which envelope answered. Two more things a `catch` should
 expect: a cross-tenant or unknown id answers **404, not 403**, so a 404 does not mean deleted; and
 two errors never came from a server at all - `waitUntilRunning`'s `408 timeout` and `0 aborted`.
-`streamEvents`' stream-open failure is a third `ZooclawError` you did not get from an error
+`streamEvents`' stream-open failure is a third `ZooworkError` you did not get from an error
 envelope, but it does carry the response's real status, with an SDK-written message and no `type`.

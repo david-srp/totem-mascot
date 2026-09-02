@@ -1,4 +1,4 @@
-// 项目 = 一个 ZooClaw session。项目名写在 session metadata（写入即固定，正好当标题用）。
+// 项目 = 一个 ZooWork session。项目名写在 session metadata（写入即固定，正好当标题用）。
 // agent 是每用户一个：第一次建项目时懒创建（见 _agent.js），之后按 uid 查回来复用。
 import { zc, readJson, send, route } from './_zc.js'
 import { ensureAgent, findAgent } from './_agent.js'

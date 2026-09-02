@@ -3,12 +3,12 @@
 把一个主体压成一枚 32 像素下还认得出的方形 IP 吉祥物标志。
 说一句你的产品是做什么的，它给三个方向和六张独立候选图，画完逐张回看核对，不合格的自己重画一次。
 
-这个仓库是一个可独立部署的 Builder 样板。每个 Builder 使用自己的 ZooClaw organization、
+这个仓库是一个可独立部署的 Builder 样板。每个 Builder 使用自己的 ZooWork organization、
 Cloudflare account、D1、Access application 和 domain，不共享部署配置。
 
 ## 这是什么
 
-一个跑在 [ZooClaw Managed Agents](https://github.com/SerendipityOneInc/zoowork-sdk-skills) 上的托管 agent，
+一个跑在 [ZooWork Managed Agents](https://zoowork.ai/docs/zh/get-started/quickstart) 上的托管 agent，
 外加一个自己写的 Web 前端。初始设计规范来自开源技能
 [s1dashu/ip-as-logo-skill](https://github.com/s1dashu/ip-as-logo-skill)（MIT）。Builder 可以在自己的
 分支持续修改并发布新版 Skill。
@@ -29,7 +29,7 @@ Cloudflare account、D1、Access application 和 domain，不共享部署配置�
 api/            服务端 API handlers（密钥只存在这一层）
   _identity.js    验证 Cloudflare Access JWT，通过 identity Worker 解析应用 user
   _agent.js       每用户 Agent 的查找、创建和 Identity hash lazy sync
-  _zc.js          ZooClaw 客户端 + 统一错误处理
+  _zc.js          ZooWork 客户端 + 统一错误处理
   _events.js      事件读取。按 seq 做增量，不要用游标（见下）
   projects.js     项目 = 一个 session；把用户输入包装成意图明确的首轮请求
   logo.js         投递消息 + 轮询增量
@@ -47,13 +47,13 @@ scripts/        部署、本地开发、端到端测试
 
 ## 跑起来
 
-从自己的 ZooClaw 和 Cloudflare account 部署完整实例，请先按
+从自己的 ZooWork 和 Cloudflare account 部署完整实例，请先按
 [`docs/builder-setup.md`](docs/builder-setup.md) 操作。仓库中的 `*.example.jsonc` 只定义字段，
 真实 `.env` 和 `wrangler.jsonc` 都在本地生成并被 Git 忽略。
 
 ```bash
 npm install && npm --prefix web install
-cp .env.example .env          # 填入你的 ZOOCLAW_API_KEY 和本地开发邮箱
+cp .env.example .env          # 填入你的 ZOOWORK_API_KEY 和本地开发邮箱
 cp wrangler.example.jsonc wrangler.jsonc
 cp infra/identity-worker/wrangler.example.jsonc infra/identity-worker/wrangler.jsonc
 # 按 builder-setup.md 创建自己的 D1、Workers、Access app 和 custom domain

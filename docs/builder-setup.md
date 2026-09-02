@@ -2,15 +2,15 @@
 
 这份文档用于把 Totem 部署成一个完全独立的 Builder 实例。部署完成后，Builder 可以验证两件事：
 
-1. 每个登录用户得到一个独立 ZooClaw Agent；
+1. 每个登录用户得到一个独立 ZooWork Agent；
 2. Builder 发布 Skill 新版本后，已有用户下一次 turn 使用最新版。
 
-每个 Builder 使用自己的 ZooClaw organization 和 Cloudflare account。仓库不提供共享的 API key、
+每个 Builder 使用自己的 ZooWork organization 和 Cloudflare account。仓库不提供共享的 API key、
 Worker、D1、Access application、hostname 或 resource ID。
 
 ## 1. 需要准备的账号和资源名
 
-准备 Node.js 22、一个 ZooClaw API key，以及一个有权管理 Workers、D1、custom domain 和 Access
+准备 Node.js 22、一个 ZooWork API key，以及一个有权管理 Workers、D1、custom domain 和 Access
 application 的 Cloudflare API token。
 
 先给当前实例选择一组不会和已有资源冲突的名称：
@@ -40,7 +40,7 @@ cp infra/identity-worker/wrangler.example.jsonc infra/identity-worker/wrangler.j
 
 在 `.env` 中填写当前 Builder 自己的：
 
-- `ZOOCLAW_API_KEY`；
+- `ZOOWORK_API_KEY`；
 - `CLOUDFLARE_API_TOKEN`；
 - `CLOUDFLARE_ACCOUNT_ID`；
 - `TOTEM_IDENTITY_SERVICE_TOKEN`；
@@ -52,7 +52,7 @@ cp infra/identity-worker/wrangler.example.jsonc infra/identity-worker/wrangler.j
 注意：`.env` 和两个真实 `wrangler.jsonc` 都被 Git 忽略。tracked `*.example.jsonc` 不能写入真实
 配置，更不能写入 secret。
 
-## 3. 在自己的 ZooClaw organization 创建 Skill
+## 3. 在自己的 ZooWork organization 创建 Skill
 
 先确认 API key 能访问模型和 Skill catalog：
 
@@ -168,12 +168,12 @@ Access team domain、AUD、邮箱域、Worker URL 和 D1 ID 都是当前部署�
 npm run builder:check
 ```
 
-首次执行 `npm run deploy` 创建 App Worker 和 custom domain。然后把 ZooClaw key 和 Identity
+首次执行 `npm run deploy` 创建 App Worker 和 custom domain。然后把 ZooWork key 和 Identity
 service token 写入当前 Builder 的 App Worker：
 
 ```bash
 npm run deploy
-npm run cf -- secret put ZOOCLAW_API_KEY --config wrangler.jsonc
+npm run cf -- secret put ZOOWORK_API_KEY --config wrangler.jsonc
 npm run cf -- secret put TOTEM_IDENTITY_SERVICE_TOKEN --config wrangler.jsonc
 ```
 
@@ -255,7 +255,7 @@ Definition，出现实际产品需求后再增加。
 <details>
 <summary>为什么两个 Builder 可以都创建名为 ip-as-logo 的 Skill？</summary>
 
-Skill 属于 ZooClaw organization。两个 Builder 使用不同 organization 和 API key，资源相互隔离。
+Skill 属于 ZooWork organization。两个 Builder 使用不同 organization 和 API key，资源相互隔离。
 </details>
 
 <details>

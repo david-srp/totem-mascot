@@ -1,7 +1,7 @@
-import { assistantText, toolCall, isRunFinished, runOutcome } from '@zooclaw-agents/sdk'
+import { assistantText, toolCall, isRunFinished, runOutcome } from '@zoowork-ai/sdk'
 import { allEvents } from '../api/_events.js'
-import { createZooclawClient } from '@zooclaw-agents/sdk'
-const zc = createZooclawClient()
+import { createZooworkClient } from '@zoowork-ai/sdk'
+const zc = createZooworkClient()
 const A = process.env.IP_AGENT_ID, S = process.env.SID
 const t0 = Date.now()
 let last = 0

@@ -3,7 +3,7 @@
 状态：Implemented and deployed
 适用项目：Totem，以及未来 `demos/` 下需要“每用户一个 Agent”的官方样板项目
 
-每个 Builder 使用自己的 ZooClaw organization 和 Cloudflare 资源。从零部署和端到端验证见
+每个 Builder 使用自己的 ZooWork organization 和 Cloudflare 资源。从零部署和端到端验证见
 [`builder-setup.md`](builder-setup.md)。
 
 ## 1. 目标
@@ -85,6 +85,10 @@ ensureAgent(identity)
 5. 启动 Agent，并等待 `desired_state === 'running'`。
 6. 用 `listAgentSkills()` 验证 Skill 已安装且 eligible。
 7. 把 `user_id → agent_id + identity_hash` 写入 D1。
+
+如果 Builder 切换了 ZooWork organization 或 API key，D1 中的旧 Agent ID 在新 organization 下会
+返回 404。应用把它视为 stale binding：先按 labels 在当前 organization 恢复，仍找不到才创建新
+Agent，并覆盖原 binding。应用用户身份继续保留，但旧 organization 中的 Session 不会自动迁移。
 
 浏览器不能提交 `user_id` 或 `agent_id`。App Worker 验证 Cloudflare Access identity 后，再从 D1
 解析 binding。

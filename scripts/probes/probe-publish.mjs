@@ -1,5 +1,5 @@
-import { createZooclawClient, assistantText, isRunFinished, runOutcome, toolCall } from '@zooclaw-agents/sdk'
-const zc = createZooclawClient()
+import { createZooworkClient, assistantText, isRunFinished, runOutcome, toolCall } from '@zoowork-ai/sdk'
+const zc = createZooworkClient()
 const A = process.env.IP_AGENT_ID
 const s = await zc.createSession(A, {
   initial_events: [{ type: 'user.message', content: '不要生成任何新图。请把已有文件 /workspace/logos/pomodoro-app/A1.png 发布为 artifact，然后告诉我：(1) 你到底有没有 artifact_publish 这个工具 (2) 如果有，返回的 artifact id 是什么 (3) 如果没有，把你实际可用的工具名字全部列出来。' }],

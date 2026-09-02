@@ -1,4 +1,5 @@
 // 每用户一个 Agent。Identity 通过内容 hash lazy sync；Skill 安装一次后自动跟随 latest。
+import { ZooworkError } from '@zoowork-ai/sdk'
 import { zc } from './_zc.js'
 import { bindAgent, recordIdentityHash } from './_identity.js'
 import { APP, MODEL_PREF, SKILL_NAME, agentResource, idemKeyFor, identityDefinition } from '../ip-as-logo/agent-def.mjs'
@@ -38,16 +39,38 @@ async function syncIdentity(identity, agentId) {
   return agentId
 }
 
+async function validateBoundAgent(agentId) {
+  try {
+    const agent = await zc.getAgent(agentId)
+    if (agent.status?.desired_state !== 'running') {
+      await zc.startAgent(agentId)
+      await zc.waitUntilRunning(agentId, { timeoutMs: 45_000 })
+    }
+    return true
+  } catch (e) {
+    // 切换 ZooWork organization/key 后，D1 可能仍保存旧环境的 Agent ID。
+    // 404 只说明当前 key 看不到它；回到 labels 恢复或创建路径并覆盖 binding。
+    if (e instanceof ZooworkError && e.status === 404) return false
+    throw e
+  }
+}
+
 /** 只查不建。优先使用 D1 binding；没有 binding 时兼容按旧 label 找回并登记。 */
 export async function findAgent(identity) {
   const uid = identity.userId
   const cached = agentCache.get(uid)
   if (cached) return syncIdentity(identity, cached)
   let id = identity.agentId || null
+  if (id && !(await validateBoundAgent(id))) {
+    id = null
+    identity.agentId = null
+    identity.identityHash = null
+  }
   if (!id) {
     const rows = await zc.listAgents({ labels: { app: APP, user: uid } })
     id = rows[0]?.agent_id ?? null
     if (id) {
+      await validateBoundAgent(id)
       const desired = await identityDefinition()
       await zc.updateAgent(id, { persona: { docs: [desired.doc] } })
       await bindAgent(uid, id, desired.hash)

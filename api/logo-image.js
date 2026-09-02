@@ -1,6 +1,6 @@
 // 把沙箱 /workspace/logos 下的图片取出来喂给浏览器。
 // exec 的 stdout 上限 200,000 字符，所以预览图走单次 base64，原图 PNG 分块拼接。
-import { ZooclawError } from '@zooclaw-agents/sdk'
+import { ZooworkError } from '@zoowork-ai/sdk'
 import { zc } from './_zc.js'
 import { findAgent } from './_agent.js'
 import { identityOf } from './_identity.js'
@@ -59,7 +59,7 @@ export default async function handler(req, res) {
     }
     res.end(buf)
   } catch (e) {
-    const msg = e instanceof ZooclawError ? `${e.status} ${e.type}` : String(e?.message ?? e)
+    const msg = e instanceof ZooworkError ? `${e.status} ${e.type}` : String(e?.message ?? e)
     res.status(502).end(msg.slice(0, 200))
   }
 }

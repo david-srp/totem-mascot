@@ -1,5 +1,5 @@
-import { createZooclawClient } from '@zooclaw-agents/sdk'
-const zc = createZooclawClient()
+import { createZooworkClient } from '@zoowork-ai/sdk'
+const zc = createZooworkClient()
 const A = process.env.IP_AGENT_ID, S = process.env.SID
 try {
   const r = await zc.postEvents(A, S, [{ type: 'user.interrupt' }])

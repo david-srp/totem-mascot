@@ -1,6 +1,6 @@
-import { createZooclawClient, assistantText } from '@zooclaw-agents/sdk'
+import { createZooworkClient, assistantText } from '@zoowork-ai/sdk'
 import { allEvents } from '../api/_events.js'
-const zc = createZooclawClient()
+const zc = createZooworkClient()
 const ss = await zc.listSessions(process.env.IP_AGENT_ID)
 const IMG = /https?:\/\/[^\s)<>"'）】，。]+?\.(?:png|jpe?g|webp|gif|avif)/gi
 let bad = 0

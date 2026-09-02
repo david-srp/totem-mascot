@@ -1,5 +1,5 @@
-import { createZooclawClient, assistantText, isRunFinished, runOutcome, toolCall } from '@zooclaw-agents/sdk'
-const zc = createZooclawClient()
+import { createZooworkClient, assistantText, isRunFinished, runOutcome, toolCall } from '@zoowork-ai/sdk'
+const zc = createZooworkClient()
 const AGENT_ID = process.env.IP_AGENT_ID
 const SESSION_ID = process.env.IP_SESSION_ID
 let cursor = process.env.IP_CURSOR || undefined

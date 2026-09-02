@@ -1,5 +1,5 @@
-import { createZooclawClient } from '@zooclaw-agents/sdk'
-const zc = createZooclawClient()
+import { createZooworkClient } from '@zoowork-ai/sdk'
+const zc = createZooworkClient()
 const skills = await zc.listSkills()
 console.log('total skills:', skills.length)
 const byScope = {}

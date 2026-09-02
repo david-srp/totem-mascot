@@ -1,5 +1,5 @@
-import { createZooclawClient } from '@zooclaw-agents/sdk'
-const zc = createZooclawClient()
+import { createZooworkClient } from '@zoowork-ai/sdk'
+const zc = createZooworkClient()
 const want = ['designer', 'chameleon-seedance', 'video-generator', 'web-designer', 'frontend-design']
 const all = await zc.listSkills()
 for (const name of want) {

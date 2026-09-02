@@ -5,11 +5,11 @@ import { readFile, mkdir, rm } from 'node:fs/promises'
 import path from 'node:path'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
-import { createZooclawClient } from '@zooclaw-agents/sdk'
+import { createZooworkClient } from '@zoowork-ai/sdk'
 import { SKILL_NAME } from '../ip-as-logo/agent-def.mjs'
 
 const run = promisify(execFile)
-const zc = createZooclawClient()
+const zc = createZooworkClient()
 
 const SKILLS_DIR = path.resolve(import.meta.dirname, '../ip-as-logo/skills')
 const ZIP_DIR = path.resolve(import.meta.dirname, '../.build/skill-zips')
